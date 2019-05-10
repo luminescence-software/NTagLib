@@ -1,0 +1,8 @@
+[submodule "lib/vendor/taglib"]
+	path = lib/vendor/taglib
+	url = https://github.com/taglib/taglib.git
+	ignore = untracked
+[submodule "lib/vendor/zlib"]
+	path = lib/vendor/zlib
+	url = https://github.com/madler/zlib.git
+	ignore = untracked
