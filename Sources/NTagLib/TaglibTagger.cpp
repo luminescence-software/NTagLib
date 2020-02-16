@@ -145,28 +145,28 @@ namespace NTagLib
 	public ref class TagNameKey abstract sealed
 	{
 	public:
-		static const String^ Artist = "ARTIST";
-		static const String^ Title = "TITLE";
-		static const String^ Date = "DATE";
-		static const String^ Album = "ALBUM";
-		static const String^ Genre = "GENRE";
-		static const String^ TrackNumber = "TRACKNUMBER";
+		literal String^ Artist = "ARTIST";
+		literal String^ Title = "TITLE";
+		literal String^ Date = "DATE";
+		literal String^ Album = "ALBUM";
+		literal String^ Genre = "GENRE";
+		literal String^ TrackNumber = "TRACKNUMBER";
 
-		static const String^ AlbumArtist = "ALBUMARTIST";
-		static const String^ DiscNumber = "DISCNUMBER";
-		static const String^ Lyricist = "LYRICIST";
-		static const String^ Composer = "COMPOSER";
-		static const String^ Language = "LANGUAGE";
-		static const String^ OriginalAlbum = "ORIGINALALBUM";
-		static const String^ OriginalArtist = "ORIGINALARTIST";
-		static const String^ OriginalDate = "ORIGINALDATE";
-		static const String^ AlbumSort = "ALBUMSORT";
-		static const String^ ArtistSort = "ARTISTSORT";
-		static const String^ AlbumArtistSort = "ALBUMARTISTSORT";
-		static const String^ TitleSort = "TITLESORT";
-		static const String^ Label = "LABEL";
-		static const String^ Comment = "COMMENT";
-		static const String^ Lyrics = "LYRICS";
+		literal String^ AlbumArtist = "ALBUMARTIST";
+		literal String^ DiscNumber = "DISCNUMBER";
+		literal String^ Lyricist = "LYRICIST";
+		literal String^ Composer = "COMPOSER";
+		literal String^ Language = "LANGUAGE";
+		literal String^ OriginalAlbum = "ORIGINALALBUM";
+		literal String^ OriginalArtist = "ORIGINALARTIST";
+		literal String^ OriginalDate = "ORIGINALDATE";
+		literal String^ AlbumSort = "ALBUMSORT";
+		literal String^ ArtistSort = "ARTISTSORT";
+		literal String^ AlbumArtistSort = "ALBUMARTISTSORT";
+		literal String^ TitleSort = "TITLESORT";
+		literal String^ Label = "LABEL";
+		literal String^ Comment = "COMMENT";
+		literal String^ Lyrics = "LYRICS";
 	};
 
 	public enum class PictureFormat
