@@ -707,16 +707,7 @@ namespace NTagLib
 			ReadTags(path);
 		}
 
-		property String^ Source
-		{
-			String^ get() { return fullPath; }
-			void set(String^ value)
-			{
-				if (!String::Equals(fullPath, value, StringComparison::OrdinalIgnoreCase))
-					ReadTags(value);
-			}
-		}
-
+		property String^ Source { String^ get() { return fullPath; } }
 		property String^ Codec { String^ get() { return codec; } }
 		property String^ CodecVersion { String^ get() { return codecVersion; } }
 		property byte Channels { byte get() { return channels; } }
@@ -727,6 +718,17 @@ namespace NTagLib
 
 		property Dictionary<String^, List<String^>^>^ Tags { Dictionary<String^, List<String^>^>^ get() { return tags; } }
 		property List<Picture^>^ Pictures { List<Picture^>^ get() { return pictures; } } // return nullptr if the format doesn't support cover, return empty collection if there is no cover
+
+		void ReloadTags()
+		{
+			ReadTags(fullPath);
+		}
+
+		void ChangeSource(String^ newPath, bool reloadTags)
+		{
+			fullPath = newPath;
+			if (reloadTags) ReloadTags();
+		}
 
 		List<String^>^ SaveTags()
 		{
