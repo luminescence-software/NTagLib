@@ -726,6 +726,9 @@ namespace NTagLib
 
 		void ChangeSource(String^ newPath, bool reloadTags)
 		{
+			if (!String::Equals(Path::GetExtension(fullPath), Path::GetExtension(newPath), StringComparison::OrdinalIgnoreCase))
+				throw gcnew ArgumentException("Changing the extension of the source file is not allowed.", "newPath");
+
 			fullPath = newPath;
 			if (reloadTags) ReloadTags();
 		}
