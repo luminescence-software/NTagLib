@@ -493,10 +493,10 @@ namespace NTagLib
 				id3->addFrame(frame); // At this point, the tag takes ownership of the frame and will handle freeing its memory.
 			}
 
-			int tagVersion = id3->header()->majorVersion();
+			TagLib::ID3v2::Version tagVersion = (TagLib::ID3v2::Version)id3->header()->majorVersion();
 
-			int minVersion = (int)TaglibSettings::MinId3Version;
-			int maxVersion = (int)TaglibSettings::MaxId3Version;
+			TagLib::ID3v2::Version minVersion = (TagLib::ID3v2::Version)TaglibSettings::MinId3Version;
+			TagLib::ID3v2::Version maxVersion = (TagLib::ID3v2::Version)TaglibSettings::MaxId3Version;
 
 			if (tagVersion < minVersion)
 				tagVersion = minVersion;
@@ -505,10 +505,10 @@ namespace NTagLib
 				tagVersion = maxVersion;
 
 			array<String^>^ unsupportedFramesId3v23 = { "RELEASEDATE", "TAGGINGDATE", "MOOD", "PRODUCEDNOTICE", "ALBUMSORT", "TITLESORT", "ARTISTSORT" };
-			if (tagVersion < 4 && Enumerable::Any<String^>(unsupportedFramesId3v23, gcnew Func<String^, bool>(tags, &Dictionary<String^, List<String^>^>::ContainsKey)))
-				tagVersion = 4;
+			if (tagVersion < TagLib::ID3v2::Version::v4 && Enumerable::Any<String^>(unsupportedFramesId3v23, gcnew Func<String^, bool>(tags, &Dictionary<String^, List<String^>^>::ContainsKey)))
+				tagVersion = TagLib::ID3v2::Version::v4;
 
-			file.save(2, true, tagVersion, false);
+ 			file.save(2, TagLib::File::StripTags::StripOthers, tagVersion, TagLib::File::DuplicateTags::DoNotDuplicate);
 			return nullptr;
 		}
 
