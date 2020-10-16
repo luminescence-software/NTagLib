@@ -55,5 +55,8 @@
     <EmbeddedResource Include="NTagLibStrings.ru.resx">
       <Filter>Fichiers de ressources</Filter>
     </EmbeddedResource>
+    <EmbeddedResource Include="NTagLibStrings.zh-Hans.resx">
+      <Filter>Fichiers de ressources</Filter>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

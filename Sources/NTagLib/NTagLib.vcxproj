@@ -223,6 +223,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="NTagLibStrings.ru.resx" />
+    <EmbeddedResource Include="NTagLibStrings.zh-Hans.resx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
