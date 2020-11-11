@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using NTagLib;
@@ -27,13 +28,16 @@ namespace TestTaglibWrapper
             //@"C:\Users\cyber\Downloads\Test\mp3.mp3",
             //@"C:\Users\cyber\Downloads\Test\vorbis.ogg",
             //@"C:\Users\cyber\Downloads\Test\wma.wma",
-            //@"C:\Users\cyber\Downloads\Test\aac.m4a",
+            //@"C:\Users\cyber\Downloads\Test\aac.m4a"
          };
 
          DoWork(workOnCopy, writeTags, addCover, addExoticTag, paths);
 
-         //Console.WriteLine("Press any key to exit...");
-         //Console.ReadKey();
+         if (!Debugger.IsAttached)
+         {
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey(); 
+         }
       }
 
       private static void DoWork(bool workOnCopy, bool writeTags, bool addCover, bool addExoticTag, string[] paths)
@@ -128,12 +132,27 @@ namespace TestTaglibWrapper
 
       private static string WorkOnCopy(string path)
       {
-         string newPath = Path.Combine(Path.GetDirectoryName(path), Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(path)));
+         string newPath = Path.Combine(GetParentDirectory(path), Path.ChangeExtension(Path.GetRandomFileName(), Path.GetExtension(path)));
          if (File.Exists(newPath))
             return WorkOnCopy(path);
 
          File.Copy(path, newPath, false);
          return newPath;
+      }
+
+      private static string GetParentDirectory(string path)
+      {
+         // Path.GetDirectoryName() returns null if path is null or if the file is in a root path
+
+         if (path == null)
+            throw new ArgumentNullException(nameof(path));
+
+         string? parentDirectory = Path.GetDirectoryName(path) ?? Path.GetPathRoot(path);
+
+         if (String.IsNullOrEmpty(parentDirectory))
+            throw new ArgumentException("The path does not contain any root directory information.", nameof(path));
+
+         return parentDirectory;
       }
    }
 }
