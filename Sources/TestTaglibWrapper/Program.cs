@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using NTagLib;
 
@@ -25,18 +23,17 @@ namespace TestTaglibWrapper
          {
             //@"C:\Users\cyber\Downloads\Test\flac.ogg", // should crash because Ogg FLAC is not supported yet
 
-            //@"C:\Users\cyber\Downloads\Test\flac.flac",
+            @"C:\Users\cyber\Downloads\Test\flac.flac",
             //@"C:\Users\cyber\Downloads\Test\mp3.mp3",
             //@"C:\Users\cyber\Downloads\Test\vorbis.ogg",
             //@"C:\Users\cyber\Downloads\Test\wma.wma",
             //@"C:\Users\cyber\Downloads\Test\aac.m4a",
-            @"C:\Users\Sylvain Rougeaux\Downloads\bug_player_chromaprint\access_violation_exception.mp3"
          };
 
          DoWork(workOnCopy, writeTags, addCover, addExoticTag, paths);
 
-         Console.WriteLine("Press any key to exit...");
-         Console.ReadKey();
+         //Console.WriteLine("Press any key to exit...");
+         //Console.ReadKey();
       }
 
       private static void DoWork(bool workOnCopy, bool writeTags, bool addCover, bool addExoticTag, string[] paths)
@@ -63,7 +60,7 @@ namespace TestTaglibWrapper
       {
          Console.WriteLine($"Writing file {path}");
 
-         TaglibTagger tagger = new TaglibTagger(path);
+         var tagger = new TaglibTagger(path);
 
          Console.WriteLine(@"Ajout: ARTIST=""artist 1"" ARTIST=""artist 2""");
          tagger.ReplaceTag(TagNameKey.Artist, "artist 1", "artist 2");
@@ -95,7 +92,7 @@ namespace TestTaglibWrapper
       {
          Console.WriteLine($"Reading file {path}");
 
-         TaglibTagger tagger = new TaglibTagger(path);
+         var tagger = new TaglibTagger(path);
          Console.WriteLine($"Codec = {tagger.Codec}");
          Console.WriteLine($"Codec Version = {tagger.CodecVersion}");
          Console.WriteLine($"Bitrate = {tagger.Bitrate}");
