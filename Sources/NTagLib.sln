@@ -14,34 +14,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
-		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{680E3C60-AE7F-4119-BBC7-FDAFA1130954}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{680E3C60-AE7F-4119-BBC7-FDAFA1130954}.Debug|Any CPU.Build.0 = Debug|Win32
 		{680E3C60-AE7F-4119-BBC7-FDAFA1130954}.Debug|x64.ActiveCfg = Debug|x64
 		{680E3C60-AE7F-4119-BBC7-FDAFA1130954}.Debug|x64.Build.0 = Debug|x64
 		{680E3C60-AE7F-4119-BBC7-FDAFA1130954}.Debug|x86.ActiveCfg = Debug|Win32
 		{680E3C60-AE7F-4119-BBC7-FDAFA1130954}.Debug|x86.Build.0 = Debug|Win32
-		{680E3C60-AE7F-4119-BBC7-FDAFA1130954}.Release|Any CPU.ActiveCfg = Release|Win32
-		{680E3C60-AE7F-4119-BBC7-FDAFA1130954}.Release|Any CPU.Build.0 = Release|Win32
 		{680E3C60-AE7F-4119-BBC7-FDAFA1130954}.Release|x64.ActiveCfg = Release|x64
 		{680E3C60-AE7F-4119-BBC7-FDAFA1130954}.Release|x64.Build.0 = Release|x64
 		{680E3C60-AE7F-4119-BBC7-FDAFA1130954}.Release|x86.ActiveCfg = Release|Win32
 		{680E3C60-AE7F-4119-BBC7-FDAFA1130954}.Release|x86.Build.0 = Release|Win32
-		{33A79B53-1F0E-4488-8860-5DC4810D55E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{33A79B53-1F0E-4488-8860-5DC4810D55E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33A79B53-1F0E-4488-8860-5DC4810D55E7}.Debug|x64.ActiveCfg = Debug|x64
 		{33A79B53-1F0E-4488-8860-5DC4810D55E7}.Debug|x64.Build.0 = Debug|x64
-		{33A79B53-1F0E-4488-8860-5DC4810D55E7}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{33A79B53-1F0E-4488-8860-5DC4810D55E7}.Debug|x86.Build.0 = Debug|Any CPU
-		{33A79B53-1F0E-4488-8860-5DC4810D55E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{33A79B53-1F0E-4488-8860-5DC4810D55E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33A79B53-1F0E-4488-8860-5DC4810D55E7}.Debug|x86.ActiveCfg = Debug|x86
+		{33A79B53-1F0E-4488-8860-5DC4810D55E7}.Debug|x86.Build.0 = Debug|x86
 		{33A79B53-1F0E-4488-8860-5DC4810D55E7}.Release|x64.ActiveCfg = Release|x64
 		{33A79B53-1F0E-4488-8860-5DC4810D55E7}.Release|x64.Build.0 = Release|x64
 		{33A79B53-1F0E-4488-8860-5DC4810D55E7}.Release|x86.ActiveCfg = Release|x86

@@ -74,20 +74,22 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)$(ProjectName)\bin\$(PlatformTarget)\$(Configuration)\</OutDir>
-    <IntDir>obj\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)$(ProjectName)\obj\$(PlatformTarget)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)$(ProjectName)\bin\$(PlatformTarget)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)$(ProjectName)\obj\$(PlatformTarget)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)$(ProjectName)\bin\$(PlatformTarget)\$(Configuration)\</OutDir>
-    <IntDir>obj\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)$(ProjectName)\obj\$(PlatformTarget)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)$(ProjectName)\bin\$(PlatformTarget)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)$(ProjectName)\obj\$(PlatformTarget)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -100,7 +102,7 @@
     <Link>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalDependencies>tag.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutputPath);..\..\lib\bin\x86-Debug\chromaprint\lib;..\..\lib\bin\x86-Debug\taglib\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutputPath);..\..\lib\bin\x86-Debug\taglib\lib</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4248 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
@@ -123,7 +125,7 @@
     <Link>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalDependencies>tag.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutputPath);..\..\lib\bin\x86-Debug\chromaprint\lib;..\..\lib\bin\x86-Debug\taglib\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutputPath);..\..\lib\bin\x64-Debug\taglib\lib</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4248 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
@@ -176,7 +178,7 @@
     <Link>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalDependencies>tag.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutputPath);..\..\lib\bin\x86-Release\taglib\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutputPath);..\..\lib\bin\x64-Release\taglib\lib</AdditionalLibraryDirectories>
       <ImageHasSafeExceptionHandlers>
       </ImageHasSafeExceptionHandlers>
       <OptimizeReferences>
