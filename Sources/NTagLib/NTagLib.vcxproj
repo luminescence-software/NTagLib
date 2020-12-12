@@ -222,4 +222,12 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
+  
+  <!-- HACK : https://thorarin.net/blog/post/2019/02/08/al1703-warning-mscorlib -->
+  <Target Name="FixAL1703Warning" BeforeTargets="GenerateSatelliteAssemblies" Condition="'$(PlatformTarget)' == 'x64'">
+    <Message Text="Adjusting SDK tools directory to use x64 version of AL.EXE" />
+    <PropertyGroup>
+      <TargetFrameworkSDKToolsDirectory>$(TargetFrameworkSDKToolsDirectory)$(PlatformTarget)\</TargetFrameworkSDKToolsDirectory>
+    </PropertyGroup>
+  </Target>
 </Project>

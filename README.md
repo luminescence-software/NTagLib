@@ -2,12 +2,12 @@
 
 NTagLib is a C++/CLI library for tagging audio files with [TagLib](https://github.com/taglib/taglib) in managed code.
 
-**NTagLib requires the Visual C++ x86 runtime that you can download [here](http://www.luminescence-software.org/download/audio/vcredist_x86.exe) (14 MB).**
+**Like all C++/CLI libraries, NTagLib requires the Visual C++ 2015-2019 runtime (x86 or x64).**
 
-This library has been designed to be used with my tags editor, [Metatogger](http://www.luminescence-software.org/metatogger.html).
+This library has been designed to be used with my tags editor, [Metatogger](https://www.luminescence-software.org/metatogger).
 
 Here is a screenshot of that software:
-![Screenshot of Metatogger](http://www.luminescence-software.org/img/metatogger/screenshot2.png)
+![Screenshot of Metatogger](https://www.luminescence-software.org/user/pages/02.metatogger/metatogger_main.png)
 
 Feel free to fork the code and [contribute](https://guides.github.com/activities/contributing-to-open-source/) to NTagLib.
 
@@ -54,10 +54,6 @@ pictures.Clear();
 
 tagger.Save(); // save changes
 ```
-
-## Native dependencies required
-
-The NTagLib library requires the Visual C++ x86 runtime that you can download [here](http://www.luminescence-software.org/download/audio/vcredist_x86.exe) (14 MB).
 
 ## Licence
 
