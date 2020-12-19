@@ -11,7 +11,7 @@ using namespace System::Security::Permissions;
 [assembly:AssemblyConfigurationAttribute("")];
 [assembly:AssemblyCompanyAttribute("Luminescence Software")];
 [assembly:AssemblyProductAttribute("NTagLib")];
-[assembly:AssemblyCopyrightAttribute("Sylvain Rougeaux, © 2019-2020")];
+[assembly:AssemblyCopyrightAttribute("Sylvain Rougeaux, © 2019-2021")];
 [assembly:AssemblyTrademarkAttribute("")];
 [assembly:AssemblyCultureAttribute("")];
 [assembly:AssemblyVersionAttribute("1.0.0.0")];
