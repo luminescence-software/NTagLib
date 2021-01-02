@@ -8,6 +8,7 @@
 #include <xiphcomment.h>
 #include <mpegfile.h>
 #include <attachedpictureframe.h>
+#include <id3v1genres.h>
 #include <id3v1tag.h>
 #include <id3v2tag.h>
 #include <vorbisfile.h>
@@ -265,6 +266,22 @@ namespace NTagLib
         }
 
         byte GetAtomDataType() { return (byte)Format; }
+    };
+
+    public ref class ID3v1GenresCollection sealed : List<String^>
+    {
+    public:
+        ID3v1GenresCollection(bool sort)
+        {
+            TagLib::StringList genres = TagLib::ID3v1::genreList();
+            for each (auto genre in genres)
+                Add(gcnew String(genre.toCWString()));
+
+            if (sort)
+                Sort();
+        }
+
+        ID3v1GenresCollection() : ID3v1GenresCollection(true) { }
     };
 
     [AttributeUsage(AttributeTargets::Class, AllowMultiple = true)]
