@@ -302,6 +302,9 @@ namespace NTagLib
         property String^ File { String^ get() { return _file; } }
     };
 
+    // FileFormatException has been moved from System.IO.dll to System.IO.Packaging.dll, and is not .NET 5.0 builtin. 
+    // By the way, you can't install it as package nuget:
+    // Impossible d’installer le package « System.IO.Packaging 5.0.0 ». Vous essayez d’installer ce package dans un projet ciblant « native,Version=v0.0 », mais le package ne contient aucun fichier de contenu ou référence d’assembly compatible avec ce framework.
     [Serializable]
     public ref class InvalidFileFormatException : /*File*/FormatException
     {

@@ -21,6 +21,10 @@
           "value": "OFF"
         },
         {
+          "name": "BUILD_TESTING",
+          "value": "OFF"
+        },
+        {
           "name": "CMAKE_SYSTEM_VERSION",
           "value": "6.1"
         },
@@ -48,6 +52,10 @@
         },
         {
           "name": "BUILD_BINDINGS",
+          "value": "OFF"
+        },
+        {
+          "name": "BUILD_TESTING",
           "value": "OFF"
         },
         {
@@ -81,6 +89,10 @@
           "value": "OFF"
         },
         {
+          "name": "BUILD_TESTING",
+          "value": "OFF"
+        },
+        {
           "name": "CMAKE_SYSTEM_VERSION",
           "value": "6.1"
         },
@@ -108,6 +120,10 @@
         },
         {
           "name": "BUILD_BINDINGS",
+          "value": "OFF"
+        },
+        {
+          "name": "BUILD_TESTING",
           "value": "OFF"
         },
         {
