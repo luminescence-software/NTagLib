@@ -12,6 +12,7 @@
 #include <id3v1tag.h>
 #include <id3v2tag.h>
 #include <vorbisfile.h>
+#include <opusfile.h>
 #include <asffile.h>
 #include <mp4file.h>
 
@@ -324,6 +325,7 @@ namespace NTagLib
     [FileFormat("MP3 (MPEG-1/2 Audio Layer 3)", ".mp3")]
     [FileFormat("FLAC (Free Lossless Audio Codec)", ".flac")]
     [FileFormat("Ogg Vorbis", ".ogg")]
+    [FileFormat("Opus", ".opus")]
     [FileFormat("WMA (Windows Media Audio)", ".wma")]
     [FileFormat("AAC (Advanced Audio Coding) - ALAC (Apple Lossless Audio Codec)", ".m4a")]
     public ref class TaglibTagger
@@ -386,6 +388,10 @@ namespace NTagLib
             else if (String::Equals(extension, ".ogg", StringComparison::OrdinalIgnoreCase))
             {
                 ReadOggFile(path);
+            }
+            else if (String::Equals(extension, ".opus", StringComparison::OrdinalIgnoreCase))
+            {
+                ReadOpusFile(path);
             }
             else if (String::Equals(extension, ".wma", StringComparison::OrdinalIgnoreCase))
             {
@@ -550,7 +556,7 @@ namespace NTagLib
         {
             TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
 
-            TagLib::Vorbis::File file(fileName, true, TagLib::AudioProperties::ReadStyle::Average);
+            TagLib::Ogg::Vorbis::File file(fileName, true, TagLib::AudioProperties::ReadStyle::Average);
             VerifyFile(file, false);
 
             TagLib::Vorbis::Properties* properties = file.audioProperties();
@@ -581,7 +587,66 @@ namespace NTagLib
             String^ path = fullPath;
             TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
 
-            TagLib::Vorbis::File file(fileName, false);
+            TagLib::Ogg::Vorbis::File file(fileName, false);
+            VerifyFile(file, true);
+
+            TagLib::Ogg::XiphComment* xiph = file.tag();
+            TagLib::PropertyMap map = xiph->setProperties(ManagedDictionaryToPropertyMap(tags));
+
+            xiph->removeAllPictures();
+            for each (auto picture in pictures)
+            {
+                TagLib::FLAC::Picture* pic = new TagLib::FLAC::Picture();
+                pic->setData(ManagedArrayToByteVector(picture->Data));
+                pic->setMimeType(msclr::interop::marshal_as<std::string>(picture->GetMimeType()).c_str());
+                pic->setType((TagLib::FLAC::Picture::Type)picture->Type);
+                if (picture->Description != nullptr)
+                    pic->setDescription(msclr::interop::marshal_as<std::wstring>(picture->Description).c_str());
+
+                xiph->addPicture(pic); //The file takes ownership of the picture and will handle freeing its memory.
+            }
+
+            file.save();
+            return PropertyMapToManagedList(map);
+        }
+
+        void ReadOpusFile(String^ path)
+        {
+            TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
+
+            TagLib::Ogg::Opus::File file(fileName, true, TagLib::AudioProperties::ReadStyle::Average);
+            VerifyFile(file, false);
+
+            TagLib::Ogg::Opus::Properties* properties = file.audioProperties();
+            TagLib::Ogg::XiphComment* xiph = file.tag();
+
+            String^ vendor = gcnew String(xiph->vendorID().toCWString());
+            int endIndex = vendor->IndexOf(',');
+            codecVersion = endIndex != -1 ? vendor->Substring(0, endIndex)->Replace("libopus", "Opus") : "Opus";
+            codec = "Opus";
+
+            bitrate = properties->bitrate(); // in kb/s
+            duration = TimeSpan::FromMilliseconds(properties->lengthInMilliseconds());
+            sampleRate = properties->sampleRate(); // in Hertz
+            channels = (byte)properties->channels(); // number of audio channels
+
+            TagLib::List<TagLib::FLAC::Picture*> arts = xiph->pictureList();
+            pictures = gcnew List<Picture^>(arts.size());
+            for (auto it = arts.begin(); it != arts.end(); it++)
+            {
+                TagLib::FLAC::Picture* pic = *it;
+                pictures->Add(gcnew Picture(pic->data(), (PictureType)pic->type(), pic->description()));
+            }
+
+            tags = PropertyMapToManagedDictionary(file.properties());
+        }
+
+        List<String^>^ WriteOpusFile()
+        {
+            String^ path = fullPath;
+            TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
+
+            TagLib::Ogg::Opus::File file(fileName, false);
             VerifyFile(file, true);
 
             TagLib::Ogg::XiphComment* xiph = file.tag();
@@ -784,6 +849,9 @@ namespace NTagLib
 
             if (String::Equals(extension, ".ogg", StringComparison::OrdinalIgnoreCase))
                 return WriteOggFile();
+
+            if (String::Equals(extension, ".opus", StringComparison::OrdinalIgnoreCase))
+                return WriteOpusFile();
 
             if (String::Equals(extension, ".wma", StringComparison::OrdinalIgnoreCase))
                 return WriteWmaFile();

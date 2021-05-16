@@ -6,9 +6,9 @@ using NTagLib;
 
 namespace TestTaglibWrapper
 {
-   class Program
+   public class Program
    {
-      static void Main()
+      public static void Main()
       {
          Console.OutputEncoding = Encoding.UTF8;
 
@@ -22,13 +22,13 @@ namespace TestTaglibWrapper
          bool addExoticTag = false;
          var paths = new string[]
          {
-            //@"C:\Users\cyber\Downloads\Test\flac.ogg", // should crash because Ogg FLAC is not supported yet
-
-            @"C:\Users\cyber\Downloads\Test\flac.flac",
-            //@"C:\Users\cyber\Downloads\Test\mp3.mp3",
-            //@"C:\Users\cyber\Downloads\Test\vorbis.ogg",
-            //@"C:\Users\cyber\Downloads\Test\wma.wma",
-            //@"C:\Users\cyber\Downloads\Test\aac.m4a"
+            //@"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\flac.ogg", // should crash because Ogg FLAC is not supported yet -> https://github.com/taglib/taglib/issues/1011
+            //@"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\flac.flac",
+            //@"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\mp3.mp3",
+            //@"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\vorbis.ogg",
+            //@"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\wma.wma",
+            //@"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\aac.m4a",
+            @"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\opus.opus"
          };
 
          DoWork(workOnCopy, writeTags, addCover, addExoticTag, paths);
@@ -79,7 +79,7 @@ namespace TestTaglibWrapper
 
          if (addCover)
          {
-            string cover = @"C:\Users\cyber\Downloads\folder.jpg";
+            string cover = @"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\cover.jpg";
             var fi = new FileInfo(cover);
             Console.WriteLine($"Adding a cover : FrontCover, JPEG, {fi.Length} bytes, without description");
             tagger.Pictures.Add(new Picture(File.ReadAllBytes(cover), PictureFormat.JPEG, PictureType.FrontCover, null)); 
