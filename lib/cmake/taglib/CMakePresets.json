@@ -1,0 +1,52 @@
+{
+  "version": 2,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      // https://docs.microsoft.com/en-us/cpp/build/cmake-presets-vs?view=msvc-160
+      "name": "windows-default",
+      "displayName": "Windows x64 Debug",
+      "description": "Sets Ninja generator, compilers, x64 architecture, build and install directory, debug build type",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_INSTALL_PREFIX": "${sourceDir}/../../bin/${presetName}/taglib"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "hostOS": [ "Windows" ]
+        }
+      },
+      "hidden": true
+    },
+    {
+      "name": "x64-Debug",
+      "description": "Sets settings for x64 debug build",
+      "inherits": "windows-default",
+      "cacheVariables": {
+        "CMAKE_SYSTEM_VERSION": "6.1", // required for Windows 7 support
+        "CMAKE_CXX_FLAGS": "/D _WIN32_WINNT=0x0601 /EHsc", // _WIN32_WINNT required for Windows 7 support
+        "BUILD_BINDINGS": "OFF",
+        "BUILD_TESTING": "OFF",
+        "ZLIB_SOURCE": "${sourceDir}/../zlib"
+      }
+    },
+    {
+      "name": "x64-Release",
+      "description": "Sets settings for x64 release build",
+      "inherits": "x64-Debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }
+  ]
+}
