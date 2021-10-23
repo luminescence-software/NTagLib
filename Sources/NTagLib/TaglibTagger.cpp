@@ -36,7 +36,7 @@ static String^ GetVorbisVersionFromVendor(String^ vendor)
     if (vendor == "Xiphophorus libVorbis I 20011217") return "Vorbis 1.0 RC3";
     if (vendor == "Xiphophorus libVorbis I 20011231") return "Vorbis 1.0 RC3";
 
-    // https://trac.xiph.org/browser/trunk/vorbis/CHANGES
+    // https://gitlab.xiph.org/xiph/vorbis/-/blob/master/CHANGES
     if (vendor == "Xiph.Org libVorbis I 20020717") return "Vorbis 1.0.0";
     if (vendor == "Xiph.Org libVorbis I 20030909") return "Vorbis 1.0.1";
     if (vendor == "Xiph.Org libVorbis I 20040629") return "Vorbis 1.1.0";
@@ -50,6 +50,8 @@ static String^ GetVorbisVersionFromVendor(String^ vendor)
     if (vendor == "Xiph.Org libVorbis I 20120203 (Omnipresent)") return "Vorbis 1.3.3";
     if (vendor == "Xiph.Org libVorbis I 20140122 (Turpakäräjiin)") return "Vorbis 1.3.4";
     if (vendor == L"Xiph.Org libVorbis I 20150105 (⛄⛄⛄⛄)") return "Vorbis 1.3.5";
+    if (vendor == L"Xiph.Org libVorbis I 20180316 (Now 100% fewer shells)") return "Vorbis 1.3.6";
+    if (vendor == L"Xiph.Org libVorbis I 20200704 (Reducing Environment)") return "Vorbis 1.3.7";
 
     return nullptr;
 }
