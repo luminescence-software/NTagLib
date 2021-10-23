@@ -22,13 +22,13 @@ namespace TestTaglibWrapper
          bool addExoticTag = false;
          var paths = new string[]
          {
-            //@"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\flac.ogg", // should crash because Ogg FLAC is not supported yet -> https://github.com/taglib/taglib/issues/1011
             //@"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\flac.flac",
             //@"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\mp3.mp3",
             //@"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\vorbis.ogg",
             //@"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\wma.wma",
             //@"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\aac.m4a",
-            @"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\opus.opus"
+            //@"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\opus.opus",
+            //@""
          };
 
          DoWork(workOnCopy, writeTags, addCover, addExoticTag, paths);

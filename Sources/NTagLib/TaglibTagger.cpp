@@ -92,10 +92,16 @@ namespace NTagLib
     public ref class TaglibSettings abstract sealed
     {
     public:
+        static TaglibSettings()
+        {
+            Encoding::RegisterProvider(CodePagesEncodingProvider::Instance);
+            ID3Latin1Encoding = Encoding::GetEncoding(0);
+        }
+
         static Id3Version MinId3Version = Id3Version::id3v23;
         static Id3Version MaxId3Version = Id3Version::id3v24;
         static bool OverrideID3Latin1EncodingCodepage = true;
-        static Encoding^ ID3Latin1Encoding = Encoding::GetEncoding(0);
+        static Encoding^ ID3Latin1Encoding;
     };
 
     public enum class PictureType
@@ -356,7 +362,7 @@ namespace NTagLib
                 throw gcnew IOException(ResourceStrings::GetString("CannotWriteFile"));
         }
 
-        void ReadTags(String ^ path)
+        void ReadTags(String^ path)
         {
             if (!File::Exists(path))
                 throw gcnew FileNotFoundException(ResourceStrings::GetString("FileNotFound"), path);
@@ -377,8 +383,8 @@ namespace NTagLib
                 }
                 finally
                 {
-                   TagLib::ID3v2::Tag::setLatin1StringHandler(nullptr);
-                   TagLib::ID3v1::Tag::setStringHandler(nullptr);
+                    TagLib::ID3v2::Tag::setLatin1StringHandler(nullptr);
+                    TagLib::ID3v1::Tag::setStringHandler(nullptr);
                 }
             }
             else if (String::Equals(extension, ".flac", StringComparison::OrdinalIgnoreCase))
@@ -471,7 +477,7 @@ namespace NTagLib
             return PropertyMapToManagedList(map);
         }
 
-        void ReadMp3File(String ^ path)
+        void ReadMp3File(String^ path)
         {
             TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
 
@@ -499,8 +505,7 @@ namespace NTagLib
                 pictures = gcnew List<Picture^>(arts.size());
                 for (auto it = arts.begin(); it != arts.end(); it++)
                 {
-                    TagLib::ID3v2::Frame* frame = *it;
-                    TagLib::ID3v2::AttachedPictureFrame* pic = static_cast<TagLib::ID3v2::AttachedPictureFrame*>(frame);
+                    TagLib::ID3v2::AttachedPictureFrame* pic = static_cast<TagLib::ID3v2::AttachedPictureFrame*>(*it);
                     pictures->Add(gcnew Picture(pic->picture(), (PictureType)pic->type(), pic->description()));
                 }
             }
@@ -552,7 +557,7 @@ namespace NTagLib
             return nullptr;
         }
 
-        void ReadOggFile(String ^ path)
+        void ReadOggFile(String^ path)
         {
             TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
 
@@ -669,7 +674,7 @@ namespace NTagLib
             return PropertyMapToManagedList(map);
         }
 
-        void ReadWmaFile(String ^ path)
+        void ReadWmaFile(String^ path)
         {
             TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
 
@@ -728,7 +733,7 @@ namespace NTagLib
             return PropertyMapToManagedList(map);
         }
 
-        void ReadM4aFile(String ^ path)
+        void ReadM4aFile(String^ path)
         {
             TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
 
@@ -801,7 +806,7 @@ namespace NTagLib
             std::set_new_handler(throw_out_of_memory_exception);
         }
 
-        TaglibTagger(String ^ path)
+        TaglibTagger(String^ path)
         {
             ReadTags(path);
         }
@@ -840,7 +845,7 @@ namespace NTagLib
             if ((File::GetAttributes(fullPath) & FileAttributes::ReadOnly) == FileAttributes::ReadOnly)
                 File::SetAttributes(fullPath, FileAttributes::Normal);
 
-            String ^ extension = Path::GetExtension(fullPath);
+            String^ extension = Path::GetExtension(fullPath);
             if (String::Equals(extension, ".mp3", StringComparison::OrdinalIgnoreCase))
                 return WriteMp3File();
 
@@ -862,12 +867,12 @@ namespace NTagLib
             throw gcnew NotSupportedFileFormatException(ResourceStrings::GetString("FileFormatNotSupported"));
         }
 
-        bool RemoveTag(String ^ tag)
+        bool RemoveTag(String^ tag)
         {
             return tags->Remove(tag);
         }
 
-        IEnumerable<String^>^ GetTagValues(String ^ tag)
+        IEnumerable<String^>^ GetTagValues(String^ tag)
         {
             List<String^>^ tagValues;
             if (tags->TryGetValue(tag, tagValues))
@@ -876,19 +881,19 @@ namespace NTagLib
             return Enumerable::Empty<String^>();
         }
 
-        void ReplaceTag(String ^ tag, ...array<String^> ^ values)
+        void ReplaceTag(String^ tag, ...array<String^>^ values)
         {
             RemoveTag(tag);
             AddTag(tag, values);
         }
 
-        void ReplaceTag(String ^ tag, String ^ value)
+        void ReplaceTag(String^ tag, String^ value)
         {
             RemoveTag(tag);
             AddTag(tag, value);
         }
 
-        void AddTag(String ^ tag, ...array<String^> ^ values)
+        void AddTag(String^ tag, ...array<String^>^ values)
         {
             List<String^>^ tagValues;
             if (tags->TryGetValue(tag, tagValues))
@@ -903,7 +908,7 @@ namespace NTagLib
                 tags->Add(tag, gcnew List<String^>(Enumerable::Distinct<String^>(values)));
         }
 
-        void AddTag(String ^ tag, String ^ value)
+        void AddTag(String^ tag, String^ value)
         {
             List<String^>^ tagValues;
             if (tags->TryGetValue(tag, tagValues))
