@@ -1,8 +1,8 @@
-# NTagLib
+﻿# NTagLib
 
 NTagLib is a C++/CLI library for tagging audio files with [TagLib](https://github.com/taglib/taglib) in managed code.
 
-**Like all C++/CLI libraries, NTagLib requires the Visual C++ 2015-2019 runtime (x86 or x64).**
+**NTagLib requires the Visual C++ 2022 runtime (x64).**
 
 This library has been designed to be used with my tags editor, [Metatogger](https://www.luminescence-software.org/metatogger).
 
@@ -16,7 +16,7 @@ Feel free to fork the code and [contribute](https://guides.github.com/activities
 ```C#
 using NTagLib;
 
-// supports the following audio formats: MP3 (*.mp3), FLAC (*.flac), Ogg Vorbis (*.ogg), WMA (*.wma) and AAC/ALAC (*.m4a)
+// supports the following audio formats: MP3 (*.mp3), FLAC (*.flac), Opus (*.opus), Ogg Vorbis (*.ogg), WMA (*.wma) and AAC/ALAC (*.m4a)
 var tagger = new TaglibTagger(@"C:\MyFolder\MyAudioFile.flac");
 
 // getting technical informations
