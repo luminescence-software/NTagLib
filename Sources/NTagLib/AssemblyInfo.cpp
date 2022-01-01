@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 using namespace System;
 using namespace System::Reflection;
@@ -11,7 +11,7 @@ using namespace System::Security::Permissions;
 [assembly:AssemblyConfigurationAttribute("")];
 [assembly:AssemblyCompanyAttribute("Luminescence Software")];
 [assembly:AssemblyProductAttribute("NTagLib")];
-[assembly:AssemblyCopyrightAttribute("Sylvain Rougeaux, � 2019-2021")];
+[assembly:AssemblyCopyrightAttribute("Sylvain Rougeaux, © 2019-2022")];
 [assembly:AssemblyTrademarkAttribute("")];
 [assembly:AssemblyCultureAttribute("")];
 [assembly:AssemblyVersionAttribute("1.12.0.0")];
