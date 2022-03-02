@@ -14,6 +14,6 @@ using namespace System::Security::Permissions;
 [assembly:AssemblyCopyrightAttribute("Sylvain Rougeaux, © 2019-2022")];
 [assembly:AssemblyTrademarkAttribute("")];
 [assembly:AssemblyCultureAttribute("")];
-[assembly:AssemblyVersionAttribute("1.12.0.0")];
+[assembly:AssemblyVersionAttribute("1.12.1.0")];
 [assembly:ComVisible(false)];
 [assembly:CLSCompliantAttribute(true)];

@@ -555,6 +555,10 @@ namespace NTagLib
             if (tagVersion < TagLib::ID3v2::Version::v4 && Enumerable::Any<String^>(unsupportedFramesId3v23, gcnew Func<String^, bool>(tags, &Dictionary<String^, List<String^>^>::ContainsKey)))
                 tagVersion = TagLib::ID3v2::Version::v4;
 
+            List<String^>^ genres;
+            if (tagVersion < TagLib::ID3v2::Version::v4 && tags->TryGetValue(TagNameKey::Genre, genres) && Enumerable::Any<String^>(Enumerable::Except<String^>(genres, gcnew ID3v1GenresCollection())))
+                tagVersion = TagLib::ID3v2::Version::v4;
+
             file.save(2, TagLib::File::StripTags::StripOthers, tagVersion, TagLib::File::DuplicateTags::DoNotDuplicate);
             return nullptr;
         }
