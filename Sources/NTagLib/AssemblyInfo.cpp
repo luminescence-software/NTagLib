@@ -6,14 +6,14 @@ using namespace System::Runtime::CompilerServices;
 using namespace System::Runtime::InteropServices;
 using namespace System::Security::Permissions;
 
-[assembly:AssemblyTitleAttribute("NTagLib")];
-[assembly:AssemblyDescriptionAttribute("A C++/CLI assembly for tagging audio files with TagLib in managed code.")]
-[assembly:AssemblyConfigurationAttribute("")];
-[assembly:AssemblyCompanyAttribute("Luminescence Software")];
-[assembly:AssemblyProductAttribute("NTagLib")];
-[assembly:AssemblyCopyrightAttribute("Sylvain Rougeaux, © 2019-2022")];
-[assembly:AssemblyTrademarkAttribute("")];
-[assembly:AssemblyCultureAttribute("")];
-[assembly:AssemblyVersionAttribute("1.12.1.0")];
+[assembly:AssemblyTitle("NTagLib")];
+[assembly:AssemblyDescription("A C++/CLI assembly for tagging audio files with TagLib (commit 0470c28) in managed code.")]
+[assembly:AssemblyConfiguration("")];
+[assembly:AssemblyCompany("Luminescence Software")];
+[assembly:AssemblyProduct("NTagLib")];
+[assembly:AssemblyCopyright("Sylvain Rougeaux, © 2019-2022")];
+[assembly:AssemblyTrademark("")];
+[assembly:AssemblyCulture("")];
+[assembly:AssemblyVersion("1.12.2.0")]; // Major.Minor.x.x is the version number of taglib, x.x.Build.Revision is the version number of NTagLib
 [assembly:ComVisible(false)];
-[assembly:CLSCompliantAttribute(true)];
+[assembly:CLSCompliant(true)];
