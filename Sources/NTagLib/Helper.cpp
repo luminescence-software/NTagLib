@@ -143,7 +143,23 @@ namespace NTagLib
     {
     private:
         static initonly array<String^>^ names = gcnew array<String^> {
-            AcoustidFingerprint, AcoustidID, Album, AlbumArtist, AlbumArtistSort, AlbumSort, Arranger, Artist, ArtistSort, ArtistWebPage, AudioSourceWebPage,            BPM,            Comment, Compilation, Composer, ComposerSort, Conductor, Copyright, CopyrightURL,            Date, DiscNumber, DJMixer,            EncodedBy, Encoding, EncodingTime, Engineer,            FileType, FileWebPage,            Genre,            InitialKey, ISRC,            Label, Language, Length, Lyricist, Lyrics,            Media, Mixer, Mood, MusicBrainzAlbumArtistID, MusicBrainzAlbumID, MusicBrainzArtistID, MusicBrainzReleaseGroupID, MusicBrainzReleaseTrackID, MusicBrainzTrackID, MusicBrainzWorkID, MusicipPUID,            OriginalAlbum, OriginalArtist, OriginalDate, OriginalFilename, OriginalLyricist, Owner,            PaymentWebPage, Performer, PlaylistDelay, ProducedNotice, Producer, PublisherWebPage,            RadioStation, RadioStationOwner, RadioStationWebPage, ReleaseCountry, ReleaseDate, ReleaseStatus, ReleaseType, Remixer,            Subtitle,            TaggingDate, Title, TitleSort, TrackNumber,            URL,            Work
+            AcoustidFingerprint, AcoustidID, Album, AlbumArtist, AlbumArtistSort, AlbumSort, Arranger, Artist, ArtistSort, ArtistWebPage, AudioSourceWebPage,
+            BPM,
+            Comment, Compilation, Composer, ComposerSort, Conductor, Copyright, CopyrightURL,
+            Date, DiscNumber, DJMixer,
+            EncodedBy, Encoding, EncodingTime, Engineer,
+            FileType, FileWebPage,
+            Genre,
+            InitialKey, ISRC,
+            Label, Language, Length, Lyricist, Lyrics,
+            Media, Mixer, Mood, MusicBrainzAlbumArtistID, MusicBrainzAlbumID, MusicBrainzArtistID, MusicBrainzReleaseGroupID, MusicBrainzReleaseTrackID, MusicBrainzTrackID, MusicBrainzWorkID, MusicipPUID,
+            OriginalAlbum, OriginalArtist, OriginalDate, OriginalFilename, OriginalLyricist, Owner,
+            PaymentWebPage, Performer, PlaylistDelay, ProducedNotice, Producer, PublisherWebPage,
+            RadioStation, RadioStationOwner, RadioStationWebPage, ReleaseCountry, ReleaseDate, ReleaseStatus, ReleaseType, Remixer,
+            Subtitle,
+            TaggingDate, Title, TitleSort, TrackNumber,
+            URL,
+            Work
         };
 
     public:
