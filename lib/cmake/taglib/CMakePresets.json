@@ -21,8 +21,7 @@
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/../../bin/${presetName}/taglib",
         "CMAKE_C_COMPILER": "cl",
         "CMAKE_CXX_COMPILER": "cl",
-        "CMAKE_SYSTEM_VERSION": "6.1", // required for Windows 7 support
-        "CMAKE_CXX_FLAGS": "/D _WIN32_WINNT=0x0601 /EHsc", // _WIN32_WINNT required for Windows 7 support
+        "CMAKE_CXX_FLAGS": "/EHsc",
         "BUILD_BINDINGS": "OFF",
         "BUILD_TESTING": "OFF",
         "ZLIB_SOURCE": "${sourceDir}/../zlib"
