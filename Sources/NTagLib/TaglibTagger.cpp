@@ -55,7 +55,14 @@ namespace NTagLib
                 throw gcnew IOException(ResourceStrings::GetString("CannotOpenFile"));
 
             if (!file.isValid() || (!writeAccessRequired && file.audioProperties() == nullptr))
+            {
+                // HACK : Audio files larger than 2GB cannot be opened with taglib 1.x. https://github.com/taglib/taglib/issues/1089
+                auto fi = gcnew FileInfo(gcnew String(file.name().wstr().c_str()));
+                if (fi->Length > Int32::MaxValue)
+                    throw gcnew NotSupportedException("Audio files larger than 2GB cannot be opened with taglib.");
+
                 throw gcnew InvalidFileFormatException(ResourceStrings::GetString("InvalidAudioFile"));
+            }
 
             if (writeAccessRequired && file.readOnly())
                 throw gcnew IOException(ResourceStrings::GetString("CannotWriteFile"));

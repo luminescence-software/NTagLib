@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TestTaglibWrapper": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
