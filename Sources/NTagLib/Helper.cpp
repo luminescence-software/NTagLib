@@ -146,7 +146,7 @@ namespace NTagLib
             AcoustidFingerprint, AcoustidID, Album, AlbumArtist, AlbumArtistSort, AlbumSort, Arranger, Artist, ArtistSort, ArtistWebPage, AudioSourceWebPage,
             BPM,
             Comment, Compilation, Composer, ComposerSort, Conductor, Copyright, CopyrightURL,
-            Date, DiscNumber, DJMixer,
+            Date, DiscNumber, DiscSubtitle, DJMixer,
             EncodedBy, Encoding, EncodingTime, Engineer,
             FileType, FileWebPage,
             Genre,
@@ -184,6 +184,7 @@ namespace NTagLib
         literal String^ CopyrightURL = "COPYRIGHTURL"; // WCOP
         literal String^ Date = "DATE"; // TDRC
         literal String^ DiscNumber = "DISCNUMBER"; // TPOS
+        literal String^ DiscSubtitle = "DISCSUBTITLE"; // TSST
         literal String^ DJMixer = "DJMIXER"; // TIPL
         literal String^ EncodedBy = "ENCODEDBY"; // TENC
         literal String^ Encoding = "ENCODING"; // TSSE
