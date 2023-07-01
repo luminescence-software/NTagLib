@@ -17,7 +17,5 @@ using namespace System::Security::Permissions;
 [assembly:ComVisible(false)];
 [assembly:CLSCompliant(true)];
 
-[assembly:AssemblyVersion("1.13.3.14823")]; // commit taglib 39e712796f2dd7336188ae690bc3837049f29aac
-// Major.Minor.x.x is the version number of taglib
-// x.x.Build.x is the version number of NTagLib
-// x.x.x.Revision is the four first hex digits of taglib git commit, converted in decimal
+[assembly:AssemblyVersion("2.0.0.0")]; // taglib commit c840222a391439285478820b4477d5fa6b78d63d
+

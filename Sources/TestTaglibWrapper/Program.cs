@@ -16,6 +16,9 @@ namespace TestTaglibWrapper
          TaglibSettings.MaxId3Version = Id3Version.id3v24;
          //TaglibSettings.ID3Latin1Encoding = Encoding.GetEncoding(1252);
 
+         Version taglibVersion = TaglibTagger.TagLibVersion;
+         Console.WriteLine(taglibVersion.ToString());
+
          bool workOnCopy = true;
          bool writeTags = false;
          bool addCover = false;

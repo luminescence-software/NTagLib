@@ -533,6 +533,8 @@ namespace NTagLib
         property Dictionary<String^, List<String^>^>^ Tags { Dictionary<String^, List<String^>^>^ get() { return tags; } }
         property List<Picture^>^ Pictures { List<Picture^>^ get() { return pictures; } } // return nullptr if the format doesn't support cover, return empty collection if there is no cover
 
+        static property Version^ TagLibVersion { Version^ get() { return gcnew Version(TAGLIB_MAJOR_VERSION, TAGLIB_MINOR_VERSION, TAGLIB_PATCH_VERSION); } }
+
         void ReloadTags()
         {
             ReadTags(fullPath);
