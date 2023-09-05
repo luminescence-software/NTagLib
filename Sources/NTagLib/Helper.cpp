@@ -47,7 +47,7 @@ static String^ GetVorbisVersionFromVendor(String^ vendor)
 
 namespace NTagLib
 {
-    class ID3StringHandler : public TagLib::ID3v2::Latin1StringHandler, public TagLib::ID3v1::StringHandler
+    class ID3StringHandler final : public TagLib::ID3v2::Latin1StringHandler, public TagLib::ID3v1::StringHandler
     {
     private:
         int codepage;
@@ -62,7 +62,7 @@ namespace NTagLib
         }
 
     public:
-        ID3StringHandler(int cp = 0) : codepage(cp) { }
+        explicit ID3StringHandler(int cp = 0) : codepage(cp) { }
 
         TagLib::String parse(const TagLib::ByteVector& data) const override
         {
@@ -340,7 +340,7 @@ namespace NTagLib
             return PictureFormat::Unknown;
         }
 
-        byte GetAtomDataType() { return (byte)Format; }
+        byte GetAtomDataType() { return static_cast<byte>(Format); }
     };
 
     public ref class ID3v1GenresCollection sealed : List<String^>
@@ -377,9 +377,7 @@ namespace NTagLib
         property String^ File { String^ get() { return _file; } }
     };
 
-    // FileFormatException has been moved from System.IO.dll to System.IO.Packaging.dll, and is not .NET 5.0 builtin. 
-    // By the way, you can't install it as package nuget:
-    // Impossible d’installer le package « System.IO.Packaging 5.0.0 ». Vous essayez d’installer ce package dans un projet ciblant « native,Version=v0.0 », mais le package ne contient aucun fichier de contenu ou référence d’assembly compatible avec ce framework.
+    // FileFormatException has been moved from System.IO.dll to System.IO.Packaging.dll, and is no longer .NET built-in.
     [Serializable]
     public ref class InvalidFileFormatException : /*File*/FormatException
     {

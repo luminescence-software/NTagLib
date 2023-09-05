@@ -8,7 +8,6 @@
 #include <xiphcomment.h>
 #include <mpegfile.h>
 #include <attachedpictureframe.h>
-#include <id3v1genres.h>
 #include <id3v1tag.h>
 #include <id3v2tag.h>
 #include <vorbisfile.h>
@@ -76,7 +75,7 @@ namespace NTagLib
             String^ extension = Path::GetExtension(path);
             if (String::Equals(extension, ".mp3", StringComparison::OrdinalIgnoreCase))
             {
-                ID3StringHandler id3StringHandler(TaglibSettings::ID3Latin1Encoding->CodePage);
+                const ID3StringHandler id3StringHandler(TaglibSettings::ID3Latin1Encoding->CodePage);
                 if (TaglibSettings::OverrideID3Latin1EncodingCodepage)
                 {
                     TagLib::ID3v2::Tag::setLatin1StringHandler(&id3StringHandler);
@@ -123,15 +122,15 @@ namespace NTagLib
 
         void ReadFlacFile(String^ path)
         {
-            TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
+            const TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
 
             TagLib::FLAC::File file(fileName, true, TagLib::AudioProperties::ReadStyle::Average);
             VerifyFile(file, false);
             if (!file.hasXiphComment())
                 throw gcnew InvalidFileFormatException(ResourceStrings::GetString("InvalidAudioFile"));
 
-            TagLib::FLAC::Properties* properties = file.audioProperties();
-            TagLib::Ogg::XiphComment* xiph = file.xiphComment();
+            const TagLib::FLAC::Properties* properties = file.audioProperties();
+            const TagLib::Ogg::XiphComment* xiph = file.xiphComment();
 
             TagLib::StringList buffer = xiph->vendorID().split();
             codecVersion = buffer.size() > 2 ? "FLAC " + gcnew String(buffer[2].toCWString()) : "FLAC";
@@ -140,38 +139,38 @@ namespace NTagLib
             bitrate = properties->bitrate(); // in kb/s
             duration = TimeSpan::FromMilliseconds(properties->lengthInMilliseconds());
             sampleRate = properties->sampleRate(); // in Hertz
-            channels = (byte)properties->channels(); // number of audio channels
+            channels = static_cast<byte>(properties->channels()); // number of audio channels
             bitsPerSample = properties->bitsPerSample(); // in bits
 
             tags = PropertyMapToManagedDictionary(file.properties());
 
             TagLib::List<TagLib::FLAC::Picture*> arts = file.pictureList();
             pictures = gcnew List<Picture^>(arts.size());
-            for (auto it = arts.begin(); it != arts.end(); it++)
+            for (auto it = arts.begin(); it != arts.end(); ++it)
             {
-                TagLib::FLAC::Picture* pic = *it;
-                pictures->Add(gcnew Picture(pic->data(), (PictureType)pic->type(), pic->description()));
+                const TagLib::FLAC::Picture* pic = *it;
+                pictures->Add(gcnew Picture(pic->data(), static_cast<PictureType>(pic->type()), pic->description()));
             }
         }
 
         List<String^>^ WriteFlacFile()
         {
             String^ path = fullPath;
-            TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
+            const TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
 
             TagLib::FLAC::File file(fileName, false);
             VerifyFile(file, true);
 
             TagLib::Ogg::XiphComment* xiph = file.xiphComment(true);
-            TagLib::PropertyMap map = xiph->setProperties(ManagedDictionaryToPropertyMap(tags));
+            const TagLib::PropertyMap map = xiph->setProperties(ManagedDictionaryToPropertyMap(tags));
 
             file.removePictures();
             for each (auto picture in pictures)
             {
-                TagLib::FLAC::Picture* pic = new TagLib::FLAC::Picture();
+                const auto pic = new TagLib::FLAC::Picture();
                 pic->setData(ManagedArrayToByteVector(picture->Data));
                 pic->setMimeType(msclr::interop::marshal_as<std::string>(picture->GetMimeType()).c_str());
-                pic->setType((TagLib::FLAC::Picture::Type)picture->Type);
+                pic->setType(static_cast<TagLib::FLAC::Picture::Type>(picture->Type));
                 if (picture->Description != nullptr)
                     pic->setDescription(msclr::interop::marshal_as<std::wstring>(picture->Description).c_str());
 
@@ -185,12 +184,12 @@ namespace NTagLib
 
         void ReadMp3File(String^ path)
         {
-            TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
+            const TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
 
             TagLib::MPEG::File file(fileName, true, TagLib::AudioProperties::ReadStyle::Average);
             VerifyFile(file, false);
 
-            TagLib::MPEG::Properties* properties = file.audioProperties();
+            const TagLib::MPEG::Properties* properties = file.audioProperties();
             if (properties->bitrate() == 0)
                 throw gcnew InvalidFileFormatException(ResourceStrings::GetString("InvalidAudioFile"));
 
@@ -199,20 +198,20 @@ namespace NTagLib
             bitrate = properties->bitrate(); // in kb/s
             duration = TimeSpan::FromMilliseconds(properties->lengthInMilliseconds());
             sampleRate = properties->sampleRate(); // in Hertz
-            channels = (byte)properties->channels(); // number of audio channels
+            channels = static_cast<byte>(properties->channels()); // number of audio channels
             bitsPerSample = 0; // in bits
 
             tags = PropertyMapToManagedDictionary(file.properties());
 
             if (file.hasID3v2Tag())
             {
-                TagLib::ID3v2::Tag* tag = file.ID3v2Tag(false);
+                const TagLib::ID3v2::Tag* tag = file.ID3v2Tag(false);
                 TagLib::ID3v2::FrameList arts = tag->frameListMap()["APIC"];
                 pictures = gcnew List<Picture^>(arts.size());
-                for (auto it = arts.begin(); it != arts.end(); it++)
+                for (auto it = arts.begin(); it != arts.end(); ++it)
                 {
-                    TagLib::ID3v2::AttachedPictureFrame* pic = static_cast<TagLib::ID3v2::AttachedPictureFrame*>(*it);
-                    pictures->Add(gcnew Picture(pic->picture(), (PictureType)pic->type(), pic->description()));
+                    const TagLib::ID3v2::AttachedPictureFrame* pic = static_cast<TagLib::ID3v2::AttachedPictureFrame*>(*it);
+                    pictures->Add(gcnew Picture(pic->picture(), static_cast<PictureType>(pic->type()), pic->description()));
                 }
             }
             else
@@ -222,7 +221,7 @@ namespace NTagLib
         List<String^>^ WriteMp3File()
         {
             String^ path = fullPath;
-            TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
+            const TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
 
             TagLib::MPEG::File file(fileName, false);
             VerifyFile(file, true);
@@ -234,20 +233,20 @@ namespace NTagLib
             id3->removeFrames("APIC");
             for each (auto picture in pictures)
             {
-                TagLib::ID3v2::AttachedPictureFrame* frame = new TagLib::ID3v2::AttachedPictureFrame();
+                const auto frame = new TagLib::ID3v2::AttachedPictureFrame();
                 frame->setPicture(ManagedArrayToByteVector(picture->Data));
                 frame->setMimeType(msclr::interop::marshal_as<std::string>(picture->GetMimeType()).c_str());
-                frame->setType((TagLib::ID3v2::AttachedPictureFrame::Type)picture->Type);
+                frame->setType(static_cast<TagLib::ID3v2::AttachedPictureFrame::Type>(picture->Type));
                 if (picture->Description != nullptr)
                     frame->setDescription(msclr::interop::marshal_as<std::wstring>(picture->Description).c_str());
 
                 id3->addFrame(frame); // At this point, the tag takes ownership of the frame and will handle freeing its memory.
             }
 
-            TagLib::ID3v2::Version tagVersion = (TagLib::ID3v2::Version)id3->header()->majorVersion();
+            auto tagVersion = static_cast<TagLib::ID3v2::Version>(id3->header()->majorVersion());
 
-            TagLib::ID3v2::Version minVersion = (TagLib::ID3v2::Version)TaglibSettings::MinId3Version;
-            TagLib::ID3v2::Version maxVersion = (TagLib::ID3v2::Version)TaglibSettings::MaxId3Version;
+            const auto minVersion = static_cast<TagLib::ID3v2::Version>(TaglibSettings::MinId3Version);
+            const auto maxVersion = static_cast<TagLib::ID3v2::Version>(TaglibSettings::MaxId3Version);
 
             if (tagVersion < minVersion)
                 tagVersion = minVersion;
@@ -269,29 +268,29 @@ namespace NTagLib
 
         void ReadOggFile(String^ path)
         {
-            TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
+            const TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
 
-            TagLib::Ogg::Vorbis::File file(fileName, true, TagLib::AudioProperties::ReadStyle::Average);
+            const TagLib::Ogg::Vorbis::File file(fileName, true, TagLib::AudioProperties::ReadStyle::Average);
             VerifyFile(file, false);
 
-            TagLib::Vorbis::Properties* properties = file.audioProperties();
+            const TagLib::Vorbis::Properties* properties = file.audioProperties();
             TagLib::Ogg::XiphComment* xiph = file.tag();
 
-            String^ vendor = gcnew String(xiph->vendorID().toCWString());
+            auto vendor = gcnew String(xiph->vendorID().toCWString());
             codecVersion = GetVorbisVersionFromVendor(vendor);
             codec = "Vorbis";
 
             bitrate = properties->bitrate(); // in kb/s
             duration = TimeSpan::FromMilliseconds(properties->lengthInMilliseconds());
             sampleRate = properties->sampleRate(); // in Hertz
-            channels = (byte)properties->channels(); // number of audio channels
+            channels = static_cast<byte>(properties->channels()); // number of audio channels
 
             TagLib::List<TagLib::FLAC::Picture*> arts = xiph->pictureList();
             pictures = gcnew List<Picture^>(arts.size());
-            for (auto it = arts.begin(); it != arts.end(); it++)
+            for (auto it = arts.begin(); it != arts.end(); ++it)
             {
-                TagLib::FLAC::Picture* pic = *it;
-                pictures->Add(gcnew Picture(pic->data(), (PictureType)pic->type(), pic->description()));
+                const TagLib::FLAC::Picture* pic = *it;
+                pictures->Add(gcnew Picture(pic->data(), static_cast<PictureType>(pic->type()), pic->description()));
             }
 
             tags = PropertyMapToManagedDictionary(file.properties());
@@ -300,21 +299,21 @@ namespace NTagLib
         List<String^>^ WriteOggFile()
         {
             String^ path = fullPath;
-            TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
+            const TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
 
             TagLib::Ogg::Vorbis::File file(fileName, false);
             VerifyFile(file, true);
 
             TagLib::Ogg::XiphComment* xiph = file.tag();
-            TagLib::PropertyMap map = xiph->setProperties(ManagedDictionaryToPropertyMap(tags));
+            const TagLib::PropertyMap map = xiph->setProperties(ManagedDictionaryToPropertyMap(tags));
 
             xiph->removeAllPictures();
             for each (auto picture in pictures)
             {
-                TagLib::FLAC::Picture* pic = new TagLib::FLAC::Picture();
+                const auto pic = new TagLib::FLAC::Picture();
                 pic->setData(ManagedArrayToByteVector(picture->Data));
                 pic->setMimeType(msclr::interop::marshal_as<std::string>(picture->GetMimeType()).c_str());
-                pic->setType((TagLib::FLAC::Picture::Type)picture->Type);
+                pic->setType(static_cast<TagLib::FLAC::Picture::Type>(picture->Type));
                 if (picture->Description != nullptr)
                     pic->setDescription(msclr::interop::marshal_as<std::wstring>(picture->Description).c_str());
 
@@ -327,30 +326,30 @@ namespace NTagLib
 
         void ReadOpusFile(String^ path)
         {
-            TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
+            const TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
 
-            TagLib::Ogg::Opus::File file(fileName, true, TagLib::AudioProperties::ReadStyle::Average);
+            const TagLib::Ogg::Opus::File file(fileName, true, TagLib::AudioProperties::ReadStyle::Average);
             VerifyFile(file, false);
 
-            TagLib::Ogg::Opus::Properties* properties = file.audioProperties();
+            const TagLib::Ogg::Opus::Properties* properties = file.audioProperties();
             TagLib::Ogg::XiphComment* xiph = file.tag();
 
-            String^ vendor = gcnew String(xiph->vendorID().toCWString());
-            int endIndex = vendor->IndexOf(',');
+            auto vendor = gcnew String(xiph->vendorID().toCWString());
+            const int endIndex = vendor->IndexOf(',');
             codecVersion = endIndex != -1 ? vendor->Substring(0, endIndex)->Replace("libopus", "Opus") : "Opus";
             codec = "Opus";
 
             bitrate = properties->bitrate(); // in kb/s
             duration = TimeSpan::FromMilliseconds(properties->lengthInMilliseconds());
             sampleRate = properties->sampleRate(); // in Hertz
-            channels = (byte)properties->channels(); // number of audio channels
+            channels = static_cast<byte>(properties->channels()); // number of audio channels
 
             TagLib::List<TagLib::FLAC::Picture*> arts = xiph->pictureList();
             pictures = gcnew List<Picture^>(arts.size());
-            for (auto it = arts.begin(); it != arts.end(); it++)
+            for (auto it = arts.begin(); it != arts.end(); ++it)
             {
-                TagLib::FLAC::Picture* pic = *it;
-                pictures->Add(gcnew Picture(pic->data(), (PictureType)pic->type(), pic->description()));
+                const TagLib::FLAC::Picture* pic = *it;
+                pictures->Add(gcnew Picture(pic->data(), static_cast<PictureType>(pic->type()), pic->description()));
             }
 
             tags = PropertyMapToManagedDictionary(file.properties());
@@ -359,21 +358,21 @@ namespace NTagLib
         List<String^>^ WriteOpusFile()
         {
             String^ path = fullPath;
-            TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
+            const TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
 
             TagLib::Ogg::Opus::File file(fileName, false);
             VerifyFile(file, true);
 
             TagLib::Ogg::XiphComment* xiph = file.tag();
-            TagLib::PropertyMap map = xiph->setProperties(ManagedDictionaryToPropertyMap(tags));
+            const TagLib::PropertyMap map = xiph->setProperties(ManagedDictionaryToPropertyMap(tags));
 
             xiph->removeAllPictures();
             for each (auto picture in pictures)
             {
-                TagLib::FLAC::Picture* pic = new TagLib::FLAC::Picture();
+                const auto pic = new TagLib::FLAC::Picture();
                 pic->setData(ManagedArrayToByteVector(picture->Data));
                 pic->setMimeType(msclr::interop::marshal_as<std::string>(picture->GetMimeType()).c_str());
-                pic->setType((TagLib::FLAC::Picture::Type)picture->Type);
+                pic->setType(static_cast<TagLib::FLAC::Picture::Type>(picture->Type));
                 if (picture->Description != nullptr)
                     pic->setDescription(msclr::interop::marshal_as<std::wstring>(picture->Description).c_str());
 
@@ -386,12 +385,12 @@ namespace NTagLib
 
         void ReadWmaFile(String^ path)
         {
-            TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
+            const TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
 
-            TagLib::ASF::File file(fileName, true, TagLib::AudioProperties::ReadStyle::Average);
+            const TagLib::ASF::File file(fileName, true, TagLib::AudioProperties::ReadStyle::Average);
             VerifyFile(file, false);
 
-            TagLib::ASF::Properties* properties = file.audioProperties();
+            const TagLib::ASF::Properties* properties = file.audioProperties();
 
             codecVersion = !properties->codecName().isEmpty() ? gcnew String(properties->codecName().toCString()) : "WMA";
             codec = "WMA";
@@ -399,7 +398,7 @@ namespace NTagLib
             bitrate = properties->bitrate(); // in kb/s
             duration = TimeSpan::FromMilliseconds(properties->lengthInMilliseconds());
             sampleRate = properties->sampleRate(); // in Hertz
-            channels = (byte)properties->channels(); // number of audio channels
+            channels = static_cast<byte>(properties->channels()); // number of audio channels
             bitsPerSample = properties->bitsPerSample(); // in bits
 
             tags = PropertyMapToManagedDictionary(file.properties());
@@ -407,23 +406,23 @@ namespace NTagLib
             TagLib::ASF::Tag* asf = file.tag();
             TagLib::ASF::AttributeList& arts = asf->attributeListMap()["WM/Picture"];
             pictures = gcnew List<Picture^>(arts.size());
-            for (auto it = arts.begin(); it != arts.end(); it++)
+            for (auto it = arts.begin(); it != arts.end(); ++it)
             {
                 TagLib::ASF::Attribute attr = *it;
                 TagLib::ASF::Picture pic = attr.toPicture();
-                pictures->Add(gcnew Picture(pic.picture(), (PictureType)pic.type(), pic.description()));
+                pictures->Add(gcnew Picture(pic.picture(), static_cast<PictureType>(pic.type()), pic.description()));
             }
         }
 
         List<String^>^ WriteWmaFile()
         {
             String^ path = fullPath;
-            TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
+            const TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
 
             TagLib::ASF::File file(fileName, false);
             VerifyFile(file, true);
 
-            TagLib::PropertyMap map = file.setProperties(ManagedDictionaryToPropertyMap(tags));
+            const TagLib::PropertyMap map = file.setProperties(ManagedDictionaryToPropertyMap(tags));
 
             TagLib::ASF::Tag* asf = file.tag();
             asf->removeItem("WM/Picture");
@@ -432,7 +431,7 @@ namespace NTagLib
                 TagLib::ASF::Picture pic;
                 pic.setPicture(ManagedArrayToByteVector(picture->Data));
                 pic.setMimeType(msclr::interop::marshal_as<std::string>(picture->GetMimeType()).c_str());
-                pic.setType((TagLib::ASF::Picture::Type)picture->Type);
+                pic.setType(static_cast<TagLib::ASF::Picture::Type>(picture->Type));
                 if (picture->Description != nullptr)
                     pic.setDescription(msclr::interop::marshal_as<std::wstring>(picture->Description).c_str());
 
@@ -445,12 +444,12 @@ namespace NTagLib
 
         void ReadM4aFile(String^ path)
         {
-            TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
+            const TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
 
-            TagLib::MP4::File file(fileName, true, TagLib::AudioProperties::ReadStyle::Average);
+            const TagLib::MP4::File file(fileName, true, TagLib::AudioProperties::ReadStyle::Average);
             VerifyFile(file, false);
 
-            TagLib::MP4::Properties* properties = file.audioProperties();
+            const TagLib::MP4::Properties* properties = file.audioProperties();
 
             switch (properties->codec())
             {
@@ -467,30 +466,30 @@ namespace NTagLib
             bitrate = properties->bitrate(); // in kb/s
             duration = TimeSpan::FromMilliseconds(properties->lengthInMilliseconds());
             sampleRate = properties->sampleRate(); // in Hertz
-            channels = (byte)properties->channels(); // number of audio channels
+            channels = static_cast<byte>(properties->channels()); // number of audio channels
             bitsPerSample = properties->bitsPerSample(); // in bits
 
             tags = PropertyMapToManagedDictionary(file.properties());
 
-            TagLib::MP4::Tag* tag = file.tag();
+            const TagLib::MP4::Tag* tag = file.tag();
             TagLib::MP4::CoverArtList arts = tag->item("covr").toCoverArtList();
             pictures = gcnew List<Picture^>(arts.size());
-            for (auto it = arts.begin(); it != arts.end(); it++)
+            for (auto it = arts.begin(); it != arts.end(); ++it)
             {
                 TagLib::MP4::CoverArt pic = *it;
-                pictures->Add(gcnew Picture(pic.data(), (PictureFormat)pic.format()));
+                pictures->Add(gcnew Picture(pic.data(), static_cast<PictureFormat>(pic.format())));
             }
         }
 
         List<String^>^ WriteM4aFile()
         {
             String^ path = fullPath;
-            TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
+            const TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
 
             TagLib::MP4::File file(fileName, false);
             VerifyFile(file, true);
 
-            TagLib::PropertyMap map = file.setProperties(ManagedDictionaryToPropertyMap(tags));
+            const TagLib::PropertyMap map = file.setProperties(ManagedDictionaryToPropertyMap(tags));
 
             TagLib::MP4::Tag* atom = file.tag();
             atom->removeItem("covr");
@@ -499,7 +498,7 @@ namespace NTagLib
                 TagLib::MP4::CoverArtList arts;
                 for each (auto picture in pictures)
                 {
-                    TagLib::MP4::CoverArt pic((TagLib::MP4::CoverArt::Format)picture->Format, ManagedArrayToByteVector(picture->Data));
+                    TagLib::MP4::CoverArt pic(static_cast<TagLib::MP4::CoverArt::Format>(picture->Format), ManagedArrayToByteVector(picture->Data));
                     arts.append(pic);
                 }
 

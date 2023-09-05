@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using NTagLib;
@@ -19,28 +18,21 @@ namespace TestTaglibWrapper
          Version taglibVersion = TaglibTagger.TagLibVersion;
          Console.WriteLine(taglibVersion.ToString());
 
-         bool workOnCopy = true;
-         bool writeTags = false;
-         bool addCover = false;
-         bool addExoticTag = false;
-         var paths = new string[]
+         const bool workOnCopy = true;
+         const bool writeTags = true;
+         const bool addCover = true;
+         const bool addExoticTag = false;
+         var paths = new[]
          {
-            //@"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\flac.flac",
-            //@"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\mp3.mp3",
-            //@"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\vorbis.ogg",
-            //@"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\wma.wma",
-            //@"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\aac.m4a",
-            //@"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\opus.opus",
-            //@""
+            @"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\flac.flac",
+            @"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\mp3.mp3",
+            @"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\vorbis.ogg",
+            @"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\wma.wma",
+            @"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\aac.m4a",
+            @"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\opus.opus"
          };
 
          DoWork(workOnCopy, writeTags, addCover, addExoticTag, paths);
-
-         if (!Debugger.IsAttached)
-         {
-            Console.WriteLine("Press any key to exit...");
-            Console.ReadKey(); 
-         }
       }
 
       private static void DoWork(bool workOnCopy, bool writeTags, bool addCover, bool addExoticTag, string[] paths)
@@ -75,17 +67,17 @@ namespace TestTaglibWrapper
          if (addExoticTag)
          {
             Console.WriteLine(@"Ajout: FAKE=""toto""");
-            tagger.AddTag("FAKE", "toto"); 
+            tagger.AddTag("FAKE", "toto");
          }
 
          tagger.Pictures.Clear();
 
          if (addCover)
          {
-            string cover = @"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\cover.jpg";
+            const string cover = @"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\cover.jpg";
             var fi = new FileInfo(cover);
             Console.WriteLine($"Adding a cover : FrontCover, JPEG, {fi.Length} bytes, without description");
-            tagger.Pictures.Add(new Picture(File.ReadAllBytes(cover), PictureFormat.JPEG, PictureType.FrontCover, null)); 
+            tagger.Pictures.Add(new Picture(File.ReadAllBytes(cover), PictureFormat.JPEG, PictureType.FrontCover, null));
          }
 
          Console.WriteLine("Saving...");
@@ -129,7 +121,7 @@ namespace TestTaglibWrapper
                Console.WriteLine($"   Size={cover.Data.Length} bytes");
 
                Console.WriteLine();
-            } 
+            }
          }
       }
 
@@ -147,8 +139,7 @@ namespace TestTaglibWrapper
       {
          // Path.GetDirectoryName() returns null if path is null or if the file is in a root path
 
-         if (path == null)
-            throw new ArgumentNullException(nameof(path));
+         ArgumentNullException.ThrowIfNull(path);
 
          string? parentDirectory = Path.GetDirectoryName(path) ?? Path.GetPathRoot(path);
 

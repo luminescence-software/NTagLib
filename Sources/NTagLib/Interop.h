@@ -1,11 +1,10 @@
 ﻿#pragma once
 
-#include <taglib.h>
 #include <tstring.h>
 #include <tpropertymap.h>
 
-#include <msclr\marshal.h>
-#include <msclr\marshal_cppstd.h>
+#include <msclr/marshal.h>
+#include <msclr/marshal_cppstd.h>
 
 using namespace System;
 using namespace System::Collections::Generic;
@@ -13,7 +12,7 @@ using namespace System::Collections::Generic;
 static array<byte>^ PictureByteVectorToManagedArray(const TagLib::ByteVector& data)
 {
     int offset = 0;
-    for (auto it = data.begin(); it != data.end(); it++)
+    for (auto it = data.begin(); it != data.end(); ++it)
     {
         if (*it == 0)
             offset++;
@@ -24,7 +23,7 @@ static array<byte>^ PictureByteVectorToManagedArray(const TagLib::ByteVector& da
     if (data.size() == offset)
         return gcnew array<byte>(0);
 
-    array<byte>^ buffer = gcnew array<byte>(data.size() - offset);
+    auto buffer = gcnew array<byte>(data.size() - offset);
     for (int i = 0; i < buffer->Length; i++)
         buffer[i] = data[i];
 
@@ -35,7 +34,7 @@ static List<String^>^ PropertyMapToManagedList(const TagLib::PropertyMap& map)
 {
     auto tags = gcnew List<String^>(map.size());
 
-    for (auto it = map.begin(); it != map.end(); it++)
+    for (auto it = map.begin(); it != map.end(); ++it)
         tags->Add(gcnew String(it->first.toCWString()));
 
     return tags;
@@ -49,7 +48,7 @@ static TagLib::ByteVector ManagedArrayToByteVector(array<byte>^ data)
         return buffer;
     }
 
-    pin_ptr<byte> p = &data[0];
+    const pin_ptr<byte> p = &data[0];
     unsigned char* pby = p;
     const char* pch = reinterpret_cast<char*>(pby);
     TagLib::ByteVector buffer(pch, data->Length);
@@ -78,7 +77,7 @@ static Dictionary<String^, List<String^>^>^ PropertyMapToManagedDictionary(const
 {
     auto tags = gcnew Dictionary<String^, List<String^>^>(map.size());
 
-    for (auto it = map.begin(); it != map.end(); it++)
+    for (auto it = map.begin(); it != map.end(); ++it)
     {
         TagLib::String tag = it->first;
         TagLib::StringList values = it->second;
@@ -86,7 +85,7 @@ static Dictionary<String^, List<String^>^>^ PropertyMapToManagedDictionary(const
         auto ntag = gcnew String(tag.toCWString());
         tags->Add(ntag, gcnew List<String^>(values.size()));
 
-        for (auto it2 = values.begin(); it2 != values.end(); it2++)
+        for (auto it2 = values.begin(); it2 != values.end(); ++it2)
             tags[ntag]->Add(gcnew String(it2->toCWString()));
     }
 
