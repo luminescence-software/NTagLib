@@ -9,8 +9,7 @@
     {
       // https://docs.microsoft.com/en-us/cpp/build/cmake-presets-vs?view=msvc-160
       "name": "windows-default",
-      "displayName": "Windows x64 Debug",
-      "description": "Sets Ninja generator, compilers, x64 architecture, build and install directory, debug build type",
+      "description": "Sets common settings for building taglib library",
       "generator": "Ninja",
       "binaryDir": "${sourceDir}/out/build/${presetName}",
       "architecture": {
@@ -22,9 +21,9 @@
         "CMAKE_C_COMPILER": "cl",
         "CMAKE_CXX_COMPILER": "cl",
         "CMAKE_CXX_FLAGS": "/EHsc",
+        "CMAKE_TOOLCHAIN_FILE": "E:/Home/Provisoire/vcpkg/scripts/buildsystems/vcpkg.cmake", // vcpkg install utfcpp zlib --triplet x64-windows
         "BUILD_BINDINGS": "OFF",
-        "BUILD_TESTING": "OFF",
-        "ZLIB_SOURCE": "${sourceDir}/../zlib"
+        "BUILD_TESTING": "OFF"
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
