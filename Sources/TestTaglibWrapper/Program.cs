@@ -77,7 +77,7 @@ namespace TestTaglibWrapper
             const string cover = @"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test\cover.jpg";
             var fi = new FileInfo(cover);
             Console.WriteLine($"Adding a cover : FrontCover, JPEG, {fi.Length} bytes, without description");
-            tagger.Pictures.Add(new Picture(File.ReadAllBytes(cover), PictureFormat.JPEG, PictureType.FrontCover, null));
+            tagger.Pictures.Add(new Picture(File.ReadAllBytes(cover), MimeTypes.JPEG, PictureTypes.FrontCover, String.Empty));
          }
 
          Console.WriteLine("Saving...");
@@ -115,9 +115,9 @@ namespace TestTaglibWrapper
             foreach (var cover in tagger.Pictures)
             {
                Console.WriteLine("COVER ART:");
-               Console.WriteLine($"   Type={cover.Type}");
+               Console.WriteLine($"   PictureType={cover.PictureType}");
                Console.WriteLine($"   Description={cover.Description}");
-               Console.WriteLine($"   PictureFormat={cover.Format}");
+               Console.WriteLine($"   MimeType={cover.MimeType}");
                Console.WriteLine($"   Size={cover.Data.Length} bytes");
 
                Console.WriteLine();

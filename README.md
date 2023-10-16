@@ -43,11 +43,11 @@ tagger.AddTag("MY_KEY_NAME", "Custom Tag Value");
 List<Picture> pictures = tagger.Pictures;
 if (pictures != null && pictures.Count != 0)
 {
-   Picture mainPicture = pictures.FirstOrDefault(p => p.Type == PictureType.FrontCover);
+   Picture? mainPicture = pictures.FirstOrDefault(p => p.PictureType == PictureTypes.FrontCover);
    if (mainPicture == null) mainPicture = pictures[0];
 
    byte[] data = mainPicture.Data;
-   Format pictureFormat = mainPicture.PictureFormat; // Format.JPEG
+   string pictureMime = mainPicture.MimeType; // "image/jpeg"
 }
 
 pictures.Clear();

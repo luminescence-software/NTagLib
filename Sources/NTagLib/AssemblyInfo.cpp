@@ -17,5 +17,5 @@ using namespace System::Security::Permissions;
 [assembly:ComVisible(false)];
 [assembly:CLSCompliant(true)];
 
-[assembly:AssemblyVersion("2.0.0.0")]; // taglib commit c840222a391439285478820b4477d5fa6b78d63d
+[assembly:AssemblyVersion("3.0.0.0")];
 
