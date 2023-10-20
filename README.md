@@ -1,8 +1,8 @@
 ﻿# NTagLib
 
-NTagLib is a C++/CLI library for tagging audio files with [TagLib](https://github.com/taglib/taglib) in managed code.
+NTagLib is a 64 bits C++/CLI library for tagging audio files with [TagLib](https://github.com/taglib/taglib) in managed code.
 
-**NTagLib requires the Visual C++ 2022 runtime (x64).**
+**NTagLib requires the [Visual C++ 2022](https://aka.ms/vs/17/release/vc_redist.x64.exe) runtime (x64).**
 
 This library has been designed to be used with my tags editor, [Metatogger](https://www.luminescence-software.org/metatogger).
 
@@ -24,7 +24,7 @@ var tagger = new TaglibTagger(@"C:\MyFolder\MyAudioFile.flac");
 string codecName = tagger.Codec; // "FLAC"
 string codecVersion = tagger.CodecVersion; // "1.2.1"
 byte channelsCount = tagger.Channels; // 2
-TimeSpan duration = tagger.Duration;
+TimeSpan duration = tagger.Duration; // 0:05:23
 int sampleRateInHertz = tagger.SampleRate; // 44100
 int bitsPerSample = tagger.BitsPerSample; // 16
 
@@ -41,7 +41,7 @@ tagger.AddTag("MY_KEY_NAME", "Custom Tag Value");
 // getting or setting embedded covers
 
 List<Picture> pictures = tagger.Pictures;
-if (pictures != null && pictures.Count != 0)
+if (pictures.Count != 0)
 {
    Picture? mainPicture = pictures.FirstOrDefault(p => p.PictureType == PictureTypes.FrontCover);
    if (mainPicture == null) mainPicture = pictures[0];
@@ -51,6 +51,9 @@ if (pictures != null && pictures.Count != 0)
 }
 
 pictures.Clear();
+
+byte[] bytes = File.ReadAllBytes(@"C:\MyFolder\MyCover.jpg");
+pictures.Add(new Picture(bytes, MimeTypes.JPEG, PictureTypes.FrontCover, String.Empty));
 
 tagger.Save(); // save changes
 ```
