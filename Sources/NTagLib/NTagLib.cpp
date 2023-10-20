@@ -296,6 +296,76 @@ namespace NTagLib
         id3v24 = 4
     };
 
+    public enum class AudioFileFormat
+    {
+        Unknow, Mp3, Flac, Ogg, Opus, Wma, M4a
+    };
+
+    public ref class AudioFileFormats abstract sealed
+    {
+    private:
+        static initonly Dictionary<String^, AudioFileFormat>^ extFormats = gcnew Dictionary<String^, AudioFileFormat>(StringComparer::OrdinalIgnoreCase);
+
+    public:
+        static AudioFileFormats()
+        {
+            for each (AudioFileFormat format in Enum::GetValues<AudioFileFormat>())
+            {
+                if (format != AudioFileFormat::Unknow)
+                    extFormats->Add(GetExtension(format), format);
+            }
+        }
+
+        static AudioFileFormat FromExtension(String^ path)
+        {
+            auto format = AudioFileFormat::Unknow;
+            extFormats->TryGetValue(Path::GetExtension(path), format);
+            return format;
+        }
+
+        static String^ GetExtension(AudioFileFormat format)
+        {
+            switch (format)
+            {
+            case AudioFileFormat::Mp3:
+                return ".mp3";
+            case AudioFileFormat::Flac:
+                return ".flac";
+            case AudioFileFormat::Ogg:
+                return ".ogg";
+            case AudioFileFormat::Opus:
+                return ".opus";
+            case AudioFileFormat::Wma:
+                return ".wma";
+            case AudioFileFormat::M4a:
+                return ".m4a";
+            default:
+                throw gcnew ArgumentException("Unknown format.", "format");
+            }
+        }
+
+        static String^ GetDescription(AudioFileFormat format)
+        {
+            switch (format)
+            {
+            case AudioFileFormat::Mp3:
+                return "MP3 (MPEG-1/2 Audio Layer 3)";
+            case AudioFileFormat::Flac:
+                return "FLAC (Free Lossless Audio Codec)";
+            case AudioFileFormat::Ogg:
+                return "Ogg Vorbis";
+            case AudioFileFormat::Opus:
+                return "Opus";
+            case AudioFileFormat::Wma:
+                return "WMA (Windows Media Audio)";
+            case AudioFileFormat::M4a:
+                return "AAC (Advanced Audio Coding) - ALAC (Apple Lossless Audio Codec)";
+            default:
+                throw gcnew ArgumentException("Unknown format.", "format");
+            }
+        }
+    };
+
     public ref class TaglibSettings abstract sealed
     {
     public:
@@ -434,33 +504,31 @@ namespace NTagLib
     };
 
     [AttributeUsage(AttributeTargets::Class, AllowMultiple = true)]
-        public ref class FileFormatAttribute sealed : Attribute
+    public ref class FileFormatAttribute sealed : Attribute
     {
     private:
-        initonly String^ _extension;
-        initonly String^ _file;
+        initonly AudioFileFormat _format;
 
     public:
-        FileFormatAttribute(String^ file, String^ extension)
+        FileFormatAttribute(AudioFileFormat format)
         {
-            _file = file;
-            _extension = extension;
+            _format = format;
         }
 
-        property String^ Extension { String^ get() { return _extension; } }
-        property String^ File { String^ get() { return _file; } }
+        property String^ Extension { String^ get() { return AudioFileFormats::GetExtension(_format); } }
+        property String^ File { String^ get() { return AudioFileFormats::GetDescription(_format); } }
     };
 
     // FileFormatException has been moved from System.IO.dll to System.IO.Packaging.dll, and is no longer .NET built-in.
     [Serializable]
-        public ref class InvalidFileFormatException : /*File*/FormatException
+    public ref class InvalidFileFormatException : /*File*/FormatException
     {
     public:
         InvalidFileFormatException(String^ message) : FormatException(message) { }
     };
 
     [Serializable]
-        public ref class NotSupportedFileFormatException : /*File*/FormatException
+    public ref class NotSupportedFileFormatException : /*File*/FormatException
     {
     public:
         NotSupportedFileFormatException(String^ message) : FormatException(message) { }
@@ -555,12 +623,12 @@ namespace NTagLib
 
     constexpr auto PICTURE_KEY = "PICTURE";
 
-    [FileFormat("MP3 (MPEG-1/2 Audio Layer 3)", ".mp3")]
-    [FileFormat("FLAC (Free Lossless Audio Codec)", ".flac")]
-    [FileFormat("Ogg Vorbis", ".ogg")]
-    [FileFormat("Opus", ".opus")]
-    [FileFormat("WMA (Windows Media Audio)", ".wma")]
-    [FileFormat("AAC (Advanced Audio Coding) - ALAC (Apple Lossless Audio Codec)", ".m4a")]
+    [FileFormat(AudioFileFormat::Mp3)]
+    [FileFormat(AudioFileFormat::Flac)]
+    [FileFormat(AudioFileFormat::Ogg)]
+    [FileFormat(AudioFileFormat::Opus)]
+    [FileFormat(AudioFileFormat::Wma)]
+    [FileFormat(AudioFileFormat::M4a)]
     public ref class TaglibTagger
     {
     private:
@@ -626,52 +694,51 @@ namespace NTagLib
             if (!File::Exists(path))
                 throw gcnew FileNotFoundException(ResourceStrings::GetString("FileNotFound"), path);
 
-            String^ extension = Path::GetExtension(path);
-            if (String::Equals(extension, ".mp3", StringComparison::OrdinalIgnoreCase))
+            switch (AudioFileFormats::FromExtension(path))
             {
-                const ID3StringHandler id3StringHandler(TaglibSettings::ID3Latin1Encoding->CodePage);
-                if (TaglibSettings::OverrideID3Latin1EncodingCodepage)
-                {
-                    TagLib::ID3v2::Tag::setLatin1StringHandler(&id3StringHandler);
-                    TagLib::ID3v1::Tag::setStringHandler(&id3StringHandler);
-                }
-
-                try
-                {
-                    ReadMp3File(path);
-                }
-                finally
-                {
-                    TagLib::ID3v2::Tag::setLatin1StringHandler(nullptr);
-                    TagLib::ID3v1::Tag::setStringHandler(nullptr);
-                }
-            }
-            else if (String::Equals(extension, ".flac", StringComparison::OrdinalIgnoreCase))
-            {
+            case AudioFileFormat::Mp3:
+                ReadMp3FileCore(path);
+                break;
+            case AudioFileFormat::Flac:
                 ReadFlacFile(path);
-            }
-            else if (String::Equals(extension, ".ogg", StringComparison::OrdinalIgnoreCase))
-            {
+                break;
+            case AudioFileFormat::Ogg:
                 ReadOggFile(path);
-            }
-            else if (String::Equals(extension, ".opus", StringComparison::OrdinalIgnoreCase))
-            {
+                break;
+            case AudioFileFormat::Opus:
                 ReadOpusFile(path);
-            }
-            else if (String::Equals(extension, ".wma", StringComparison::OrdinalIgnoreCase))
-            {
+                break;
+            case AudioFileFormat::Wma:
                 ReadWmaFile(path);
-            }
-            else if (String::Equals(extension, ".m4a", StringComparison::OrdinalIgnoreCase))
-            {
+                break;
+            case AudioFileFormat::M4a:
                 ReadM4aFile(path);
-            }
-            else
-            {
+                break;
+            default:
                 throw gcnew NotSupportedFileFormatException(ResourceStrings::GetString("FileFormatNotSupported"));
             }
 
             fullPath = path;
+        }
+
+        void ReadMp3FileCore(String^ path)
+        {
+            const ID3StringHandler id3StringHandler(TaglibSettings::ID3Latin1Encoding->CodePage);
+            if (TaglibSettings::OverrideID3Latin1EncodingCodepage)
+            {
+                TagLib::ID3v2::Tag::setLatin1StringHandler(&id3StringHandler);
+                TagLib::ID3v1::Tag::setStringHandler(&id3StringHandler);
+            }
+
+            try
+            {
+                ReadMp3File(path);
+            }
+            finally
+            {
+                TagLib::ID3v2::Tag::setLatin1StringHandler(nullptr);
+                TagLib::ID3v1::Tag::setStringHandler(nullptr);
+            }
         }
 
         void ReadFlacFile(String^ path)
@@ -945,7 +1012,7 @@ namespace NTagLib
         static TaglibTagger()
         {
             std::set_new_handler(throw_out_of_memory_exception);
-        }
+        }        
 
         TaglibTagger(String^ path)
         {
@@ -973,7 +1040,7 @@ namespace NTagLib
 
         void ChangeSource(String^ newPath, bool reloadTags)
         {
-            if (!String::Equals(Path::GetExtension(fullPath), Path::GetExtension(newPath), StringComparison::OrdinalIgnoreCase))
+            if (AudioFileFormats::FromExtension(fullPath) != AudioFileFormats::FromExtension(newPath))
                 throw gcnew ArgumentException("Changing the extension of the source file is not allowed.", "newPath");
 
             fullPath = newPath;
@@ -988,26 +1055,23 @@ namespace NTagLib
             if ((File::GetAttributes(fullPath) & FileAttributes::ReadOnly) == FileAttributes::ReadOnly)
                 File::SetAttributes(fullPath, FileAttributes::Normal);
 
-            String^ extension = Path::GetExtension(fullPath);
-            if (String::Equals(extension, ".mp3", StringComparison::OrdinalIgnoreCase))
+            switch (AudioFileFormats::FromExtension(fullPath))
+            {
+            case AudioFileFormat::Mp3:
                 return WriteMp3File();
-
-            if (String::Equals(extension, ".flac", StringComparison::OrdinalIgnoreCase))
+            case AudioFileFormat::Flac:
                 return WriteFlacFile();
-
-            if (String::Equals(extension, ".ogg", StringComparison::OrdinalIgnoreCase))
+            case AudioFileFormat::Ogg:
                 return WriteOggFile();
-
-            if (String::Equals(extension, ".opus", StringComparison::OrdinalIgnoreCase))
+            case AudioFileFormat::Opus:
                 return WriteOpusFile();
-
-            if (String::Equals(extension, ".wma", StringComparison::OrdinalIgnoreCase))
+            case AudioFileFormat::Wma:
                 return WriteWmaFile();
-
-            if (String::Equals(extension, ".m4a", StringComparison::OrdinalIgnoreCase))
+            case AudioFileFormat::M4a:
                 return WriteM4aFile();
-
-            throw gcnew NotSupportedFileFormatException(ResourceStrings::GetString("FileFormatNotSupported"));
+            default:
+                throw gcnew NotSupportedFileFormatException(ResourceStrings::GetString("FileFormatNotSupported"));
+            }
         }
 
         bool RemoveTag(String^ tag)

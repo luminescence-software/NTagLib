@@ -6,6 +6,7 @@
     <LangVersion>latest</LangVersion>
     <Platforms>x86;x64</Platforms>
     <Nullable>enable</Nullable>
+    <RootNamespace>TestTaglibWrapper</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

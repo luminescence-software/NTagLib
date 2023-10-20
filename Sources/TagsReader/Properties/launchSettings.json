@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "TagsReader": {
+      "commandName": "Project",
+      "commandLineArgs": "\"E:\\Home\\Important\\Development\\Toolkit\\Conception\\NTagLib\\Test\\flac.flac\"\r\n\"E:\\Home\\Important\\Development\\Toolkit\\Conception\\NTagLib\\Test\\mp3.mp3\"\r\n\"E:\\Home\\Important\\Development\\Toolkit\\Conception\\NTagLib\\Test\\vorbis.ogg\"\r\n\"E:\\Home\\Important\\Development\\Toolkit\\Conception\\NTagLib\\Test\\wma.wma\"\r\n\"E:\\Home\\Important\\Development\\Toolkit\\Conception\\NTagLib\\Test\\aac.m4a\"\r\n\"E:\\Home\\Important\\Development\\Toolkit\\Conception\\NTagLib\\Test\\opus.opus\"",
+      "nativeDebugging": true
+    }
+  }
+}
