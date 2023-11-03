@@ -721,6 +721,14 @@ namespace NTagLib
             fullPath = path;
         }
 
+        void ReadAudioProperties(const TagLib::AudioProperties* properties)
+        {
+            bitrate = properties->bitrate(); // in kb/s
+            duration = TimeSpan::FromMilliseconds(properties->lengthInMilliseconds());
+            sampleRate = properties->sampleRate(); // in Hertz
+            channels = properties->channels(); // number of audio channels
+        }
+
         void ReadMp3FileCore(String^ path)
         {
             const ID3StringHandler id3StringHandler(TaglibSettings::ID3Latin1Encoding->CodePage);
@@ -756,13 +764,9 @@ namespace NTagLib
             TagLib::StringList buffer = xiph->vendorID().split();
             codecVersion = buffer.size() > 2 ? "FLAC " + gcnew String(buffer[2].toCWString()) : "FLAC";
             codec = "FLAC";
-
-            bitrate = properties->bitrate(); // in kb/s
-            duration = TimeSpan::FromMilliseconds(properties->lengthInMilliseconds());
-            sampleRate = properties->sampleRate(); // in Hertz
-            channels = static_cast<byte>(properties->channels()); // number of audio channels
             bitsPerSample = properties->bitsPerSample(); // in bits
 
+            ReadAudioProperties(properties);
             tags = GetTagsFromProperties(file.properties());
             pictures = GetCoversFromComplexProperties(file.complexProperties(PICTURE_KEY));
         }
@@ -791,24 +795,13 @@ namespace NTagLib
             const TagLib::MPEG::File file(fileName, true, TagLib::AudioProperties::ReadStyle::Average);
             VerifyFile(file, false);
 
-            const TagLib::MPEG::Properties* properties = file.audioProperties();
-            if (properties->bitrate() == 0)
+            codec = codecVersion = "MP3";
+            ReadAudioProperties(file.audioProperties());
+            if (bitrate == 0)
                 throw gcnew InvalidFileFormatException(ResourceStrings::GetString("InvalidAudioFile"));
 
-            codec = codecVersion = "MP3";
-
-            bitrate = properties->bitrate(); // in kb/s
-            duration = TimeSpan::FromMilliseconds(properties->lengthInMilliseconds());
-            sampleRate = properties->sampleRate(); // in Hertz
-            channels = static_cast<byte>(properties->channels()); // number of audio channels
-            bitsPerSample = 0; // in bits
-
             tags = GetTagsFromProperties(file.properties());
-
-            if (file.hasID3v2Tag())
-                pictures = GetCoversFromComplexProperties(file.complexProperties(PICTURE_KEY));
-            else
-                pictures = gcnew List<Picture^>();
+            pictures = file.hasID3v2Tag() ? GetCoversFromComplexProperties(file.complexProperties(PICTURE_KEY)) : gcnew List<Picture^>();
         }
 
         List<String^>^ WriteMp3File()
@@ -853,18 +846,12 @@ namespace NTagLib
             const TagLib::Ogg::Vorbis::File file(fileName, true, TagLib::AudioProperties::ReadStyle::Average);
             VerifyFile(file, false);
 
-            const TagLib::Vorbis::Properties* properties = file.audioProperties();
             const TagLib::Ogg::XiphComment* xiph = file.tag();
-
             auto vendor = gcnew String(xiph->vendorID().toCWString());
             codecVersion = GetVorbisVersionFromVendor(vendor);
             codec = "Vorbis";
 
-            bitrate = properties->bitrate(); // in kb/s
-            duration = TimeSpan::FromMilliseconds(properties->lengthInMilliseconds());
-            sampleRate = properties->sampleRate(); // in Hertz
-            channels = static_cast<byte>(properties->channels()); // number of audio channels
-
+            ReadAudioProperties(file.audioProperties());
             tags = GetTagsFromProperties(file.properties());
             pictures = GetCoversFromComplexProperties(file.complexProperties(PICTURE_KEY));
         }
@@ -892,19 +879,13 @@ namespace NTagLib
             const TagLib::Ogg::Opus::File file(fileName, true, TagLib::AudioProperties::ReadStyle::Average);
             VerifyFile(file, false);
 
-            const TagLib::Ogg::Opus::Properties* properties = file.audioProperties();
             const TagLib::Ogg::XiphComment* xiph = file.tag();
-
             auto vendor = gcnew String(xiph->vendorID().toCWString());
             const int endIndex = vendor->IndexOf(',');
             codecVersion = endIndex != -1 ? vendor->Substring(0, endIndex)->Replace("libopus", "Opus") : "Opus";
             codec = "Opus";
 
-            bitrate = properties->bitrate(); // in kb/s
-            duration = TimeSpan::FromMilliseconds(properties->lengthInMilliseconds());
-            sampleRate = properties->sampleRate(); // in Hertz
-            channels = static_cast<byte>(properties->channels()); // number of audio channels
-
+            ReadAudioProperties(file.audioProperties());
             tags = GetTagsFromProperties(file.properties());
             pictures = GetCoversFromComplexProperties(file.complexProperties(PICTURE_KEY));
         }
@@ -933,16 +914,11 @@ namespace NTagLib
             VerifyFile(file, false);
 
             const TagLib::ASF::Properties* properties = file.audioProperties();
-
             codecVersion = !properties->codecName().isEmpty() ? gcnew String(properties->codecName().toCString()) : "WMA";
             codec = "WMA";
-
-            bitrate = properties->bitrate(); // in kb/s
-            duration = TimeSpan::FromMilliseconds(properties->lengthInMilliseconds());
-            sampleRate = properties->sampleRate(); // in Hertz
-            channels = static_cast<byte>(properties->channels()); // number of audio channels
             bitsPerSample = properties->bitsPerSample(); // in bits
 
+            ReadAudioProperties(properties);
             tags = GetTagsFromProperties(file.properties());
             pictures = GetCoversFromComplexProperties(file.complexProperties(PICTURE_KEY));
         }
@@ -970,7 +946,7 @@ namespace NTagLib
             VerifyFile(file, false);
 
             const TagLib::MP4::Properties* properties = file.audioProperties();
-
+            bitsPerSample = properties->bitsPerSample(); // in bits
             switch (properties->codec())
             {
             case TagLib::MP4::Properties::Codec::AAC:
@@ -983,12 +959,7 @@ namespace NTagLib
                 throw gcnew NotSupportedFileFormatException(ResourceStrings::GetString("FileFormatNotSupported"));
             }
 
-            bitrate = properties->bitrate(); // in kb/s
-            duration = TimeSpan::FromMilliseconds(properties->lengthInMilliseconds());
-            sampleRate = properties->sampleRate(); // in Hertz
-            channels = static_cast<byte>(properties->channels()); // number of audio channels
-            bitsPerSample = properties->bitsPerSample(); // in bits
-
+            ReadAudioProperties(properties);
             tags = GetTagsFromProperties(file.properties());
             pictures = GetCoversFromComplexProperties(file.complexProperties(PICTURE_KEY));
         }

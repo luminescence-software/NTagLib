@@ -58,6 +58,25 @@ public class TaglibTaggerTests
       File.Delete(path);
    }
 
+   [Theory]
+   [InlineData("flac.flac")]
+   [InlineData("mp3.mp3")]
+   [InlineData("vorbis.ogg")]
+   [InlineData("wma.wma")]
+   [InlineData("aac.m4a")]
+   [InlineData("opus.opus")]
+   public void ReadAudioProperties(string filename)
+   {
+      const string folder = @"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test";
+      var tagger = new TaglibTagger(Path.Combine(folder, filename));
+
+      Assert.True(tagger.Bitrate > 0);
+      Assert.True(tagger.BitsPerSample is 0 or 16);
+      Assert.True(tagger.Channels == 2);
+      Assert.True(tagger.SampleRate is 22_050 or 44_100 or 48_000);
+      Assert.True(tagger.Duration > TimeSpan.Zero);
+   }
+
    private static string WorkOnCopy(string path)
    {
       while (true)
