@@ -23,7 +23,7 @@ var tagger = new TaglibTagger(@"C:\MyFolder\MyAudioFile.flac");
 
 string codecName = tagger.Codec; // "FLAC"
 string codecVersion = tagger.CodecVersion; // "1.2.1"
-byte channelsCount = tagger.Channels; // 2
+int channelsCount = tagger.Channels; // 2
 TimeSpan duration = tagger.Duration; // 0:05:23
 int sampleRateInHertz = tagger.SampleRate; // 44100
 int bitsPerSample = tagger.BitsPerSample; // 16
@@ -32,7 +32,7 @@ int bitsPerSample = tagger.BitsPerSample; // 16
 
 // textual tags is stored in a dictionary where the key is the tag name in uppercase
 Dictionary<string, List<string>> tagsRepository = tagger.Tags;
-string artist = tagger.GetTagValues(TagNameKey.Artist).FirstOrDefault();
+string? artist = tagger.GetTagValues(TagNameKey.Artist).FirstOrDefault();
 tagger.AddTag(TagNameKey.Artist, "Artist 2", "Artist 3");
 tagger.ReplaceTag(TagNameKey.Title, "All You Need Is Love");
 tagger.RemoveTag(TagNameKey.Comment);
