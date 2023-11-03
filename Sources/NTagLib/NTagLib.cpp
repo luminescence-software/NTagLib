@@ -37,12 +37,15 @@ namespace
         throw gcnew OutOfMemoryException();
     }
 
-    List<String^>^ PropertyMapToManagedList(const TagLib::PropertyMap& properties)
+    array<String^>^ PropertyMapToArray(const TagLib::PropertyMap& properties)
     {
-        auto tags = gcnew List<String^>(properties.size());
+        if (properties.size() == 0)
+            return Array::Empty<String^>();
 
-        for (auto it = properties.begin(); it != properties.end(); ++it)
-            tags->Add(gcnew String(it->first.toCWString()));
+        auto tags = gcnew array<String^>(properties.size());
+        int i = 0;
+        for (auto it = properties.begin(); it != properties.end(); ++it, ++i)
+           tags[i] = gcnew String(it->first.toCWString());
 
         return tags;
     }
@@ -101,8 +104,8 @@ namespace NTagLib
     private:
         static initonly array<String^>^ types = gcnew array<String^> {
             Other, FileIcon, OtherFileIcon, FrontCover, BackCover, LeafletPage, Media, LeadArtist,
-                Artist, Conductor, Band, Composer, Lyricist, RecordingLocation, DuringRecording, DuringPerformance,
-                MovieScreenCapture, ColouredFish, Illustration, BandLogo, PublisherLogo
+            Artist, Conductor, Band, Composer, Lyricist, RecordingLocation, DuringRecording, DuringPerformance,
+            MovieScreenCapture, ColouredFish, Illustration, BandLogo, PublisherLogo
         };
 
     public:
@@ -771,7 +774,7 @@ namespace NTagLib
             pictures = GetCoversFromComplexProperties(file.complexProperties(PICTURE_KEY));
         }
 
-        List<String^>^ WriteFlacFile()
+        IEnumerable<String^>^ WriteFlacFile()
         {
             String^ path = fullPath;
             const TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
@@ -785,7 +788,7 @@ namespace NTagLib
 
             file.strip(TagLib::FLAC::File::ID3v1 | TagLib::FLAC::File::ID3v2);
             file.save();
-            return PropertyMapToManagedList(map);
+            return PropertyMapToArray(map);
         }
 
         void ReadMp3File(String^ path)
@@ -804,7 +807,7 @@ namespace NTagLib
             pictures = file.hasID3v2Tag() ? GetCoversFromComplexProperties(file.complexProperties(PICTURE_KEY)) : gcnew List<Picture^>();
         }
 
-        List<String^>^ WriteMp3File()
+        IEnumerable<String^>^ WriteMp3File()
         {
             String^ path = fullPath;
             const TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
@@ -836,7 +839,7 @@ namespace NTagLib
                 tagVersion = TagLib::ID3v2::Version::v4;
 
             file.save(2, TagLib::File::StripTags::StripOthers, tagVersion, TagLib::File::DuplicateTags::DoNotDuplicate);
-            return gcnew List<String^>();
+            return Enumerable::Empty<String^>();
         }
 
         void ReadOggFile(String^ path)
@@ -856,7 +859,7 @@ namespace NTagLib
             pictures = GetCoversFromComplexProperties(file.complexProperties(PICTURE_KEY));
         }
 
-        List<String^>^ WriteOggFile()
+        IEnumerable<String^>^ WriteOggFile()
         {
             String^ path = fullPath;
             const TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
@@ -869,7 +872,7 @@ namespace NTagLib
             xiph->setComplexProperties(PICTURE_KEY, GetComplexPropertiesFromCovers(pictures));
 
             file.save();
-            return PropertyMapToManagedList(map);
+            return PropertyMapToArray(map);
         }
 
         void ReadOpusFile(String^ path)
@@ -890,7 +893,7 @@ namespace NTagLib
             pictures = GetCoversFromComplexProperties(file.complexProperties(PICTURE_KEY));
         }
 
-        List<String^>^ WriteOpusFile()
+        IEnumerable<String^>^ WriteOpusFile()
         {
             String^ path = fullPath;
             const TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
@@ -903,7 +906,7 @@ namespace NTagLib
             xiph->setComplexProperties(PICTURE_KEY, GetComplexPropertiesFromCovers(pictures));
 
             file.save();
-            return PropertyMapToManagedList(map);
+            return PropertyMapToArray(map);
         }
 
         void ReadWmaFile(String^ path)
@@ -923,7 +926,7 @@ namespace NTagLib
             pictures = GetCoversFromComplexProperties(file.complexProperties(PICTURE_KEY));
         }
 
-        List<String^>^ WriteWmaFile()
+        IEnumerable<String^>^ WriteWmaFile()
         {
             String^ path = fullPath;
             const TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
@@ -935,7 +938,7 @@ namespace NTagLib
             file.setComplexProperties(PICTURE_KEY, GetComplexPropertiesFromCovers(pictures));
 
             file.save();
-            return PropertyMapToManagedList(map);
+            return PropertyMapToArray(map);
         }
 
         void ReadM4aFile(String^ path)
@@ -964,7 +967,7 @@ namespace NTagLib
             pictures = GetCoversFromComplexProperties(file.complexProperties(PICTURE_KEY));
         }
 
-        List<String^>^ WriteM4aFile()
+        IEnumerable<String^>^ WriteM4aFile()
         {
             String^ path = fullPath;
             const TagLib::FileName fileName(msclr::interop::marshal_as<std::wstring>(path).c_str());
@@ -976,14 +979,14 @@ namespace NTagLib
             file.setComplexProperties(PICTURE_KEY, GetComplexPropertiesFromCovers(pictures));
 
             file.save();
-            return PropertyMapToManagedList(map);
+            return PropertyMapToArray(map);
         }
 
     public:
         static TaglibTagger()
         {
             std::set_new_handler(throw_out_of_memory_exception);
-        }        
+        }
 
         TaglibTagger(String^ path)
         {
@@ -1018,7 +1021,7 @@ namespace NTagLib
             if (reloadTags) ReloadTags();
         }
 
-        List<String^>^ SaveTags()
+        IEnumerable<String^>^ SaveTags()
         {
             if (!File::Exists(fullPath))
                 throw gcnew FileNotFoundException(ResourceStrings::GetString("FileNotFound"), fullPath);

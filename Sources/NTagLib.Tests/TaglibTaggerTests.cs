@@ -40,7 +40,7 @@ public class TaglibTaggerTests
       byte[] data = File.ReadAllBytes(Path.Combine(folder, "cover.jpg"));
       tagger.Pictures.Clear();
       tagger.Pictures.Add(new Picture(data, MimeTypes.JPEG, PictureTypes.FrontCover, String.Empty));
-      List<string> rejectedTags = tagger.SaveTags();
+      IEnumerable<string> rejectedTags = tagger.SaveTags();
 
       tagger.ReloadTags();
       Picture? picture = tagger.Pictures.FirstOrDefault();
