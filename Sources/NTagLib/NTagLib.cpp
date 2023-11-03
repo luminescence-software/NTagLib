@@ -636,11 +636,11 @@ namespace NTagLib
 
         String^ codec;
         String^ codecVersion;
-        byte channels;
+        int channels;
         TimeSpan duration;
         int bitrate;
         int sampleRate;
-        byte bitsPerSample;
+        int bitsPerSample;
 
         Dictionary<String^, List<String^>^>^ tags;
         List<Picture^>^ pictures;
@@ -993,11 +993,11 @@ namespace NTagLib
         property String^ Source { String^ get() { return fullPath; } }
         property String^ Codec { String^ get() { return codec; } }
         property String^ CodecVersion { String^ get() { return codecVersion; } }
-        property byte Channels { byte get() { return channels; } }
+        property int Channels { int get() { return channels; } }
         property TimeSpan Duration { TimeSpan get() { return duration; } }
         property int Bitrate { int get() { return bitrate; } }
         property int SampleRate { int get() { return sampleRate; } }
-        property byte BitsPerSample { byte get() { return bitsPerSample; } }
+        property int BitsPerSample { int get() { return bitsPerSample; } }
 
         property Dictionary<String^, List<String^>^>^ Tags { Dictionary<String^, List<String^>^>^ get() { return tags; } }
         property List<Picture^>^ Pictures { List<Picture^>^ get() { return pictures; } } // return nullptr if the format doesn't support cover, return empty collection if there is no cover
