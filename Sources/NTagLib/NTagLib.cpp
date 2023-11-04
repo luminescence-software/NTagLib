@@ -730,6 +730,9 @@ namespace NTagLib
             duration = TimeSpan::FromMilliseconds(properties->lengthInMilliseconds());
             sampleRate = properties->sampleRate(); // in Hertz
             channels = properties->channels(); // number of audio channels
+
+            if (bitrate <= 0 || duration <= TimeSpan::Zero)
+                throw gcnew InvalidFileFormatException(ResourceStrings::GetString("InvalidAudioFile"));
         }
 
         void ReadMp3FileCore(String^ path)
@@ -799,10 +802,8 @@ namespace NTagLib
             VerifyFile(file, false);
 
             codec = codecVersion = "MP3";
-            ReadAudioProperties(file.audioProperties());
-            if (bitrate == 0)
-                throw gcnew InvalidFileFormatException(ResourceStrings::GetString("InvalidAudioFile"));
 
+            ReadAudioProperties(file.audioProperties());
             tags = GetTagsFromProperties(file.properties());
             pictures = file.hasID3v2Tag() ? GetCoversFromComplexProperties(file.complexProperties(PICTURE_KEY)) : gcnew List<Picture^>();
         }
