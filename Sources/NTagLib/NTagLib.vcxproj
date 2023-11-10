@@ -214,6 +214,7 @@
     <EmbeddedResource Include="NTagLibStrings.es.resx" />
     <EmbeddedResource Include="NTagLibStrings.fr.resx" />
     <EmbeddedResource Include="NTagLibStrings.it.resx" />
+    <EmbeddedResource Include="NTagLibStrings.nl.resx" />
     <EmbeddedResource Include="NTagLibStrings.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
