@@ -1,20 +1,20 @@
 ﻿#include "stdafx.h"
 
-#include <taglib.h>
-#include <tstring.h>
-#include <tpropertymap.h>
+#include <asffile.h>
 #include <flacfile.h>
 #include <flacproperties.h>
-#include <xiphcomment.h>
-#include <mpegfile.h>
 #include <id3v1genres.h>
 #include <id3v1tag.h>
 #include <id3v2tag.h>
-#include <vorbisfile.h>
-#include <opusfile.h>
-#include <asffile.h>
 #include <mp4file.h>
+#include <mpegfile.h>
+#include <opusfile.h>
+#include <taglib.h>
+#include <tpropertymap.h>
+#include <tstring.h>
 #include <tvariant.h>
+#include <vorbisfile.h>
+#include <xiphcomment.h>
 
 #include <msclr/marshal.h>
 #include <msclr/marshal_cppstd.h>
