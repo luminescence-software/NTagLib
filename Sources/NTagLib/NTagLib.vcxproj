@@ -80,7 +80,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)$(ProjectName)\bin\$(PlatformTarget)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)$(ProjectName)\obj\$(PlatformTarget)\$(Configuration)\</IntDir>
+    <IntDir>D:\Temporaire\Development\IntermediateOutput\native\$(ProjectName)\obj\$(PlatformTarget)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -90,7 +90,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)$(ProjectName)\bin\$(PlatformTarget)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)$(ProjectName)\obj\$(PlatformTarget)\$(Configuration)\</IntDir>
+    <IntDir>D:\Temporaire\Development\IntermediateOutput\native\$(ProjectName)\obj\$(PlatformTarget)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -103,7 +103,7 @@
     <Link>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalDependencies>zlibd.lib;tag.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>E:\Home\Provisoire\vcpkg\installed\x86-windows-static-md\debug\lib;..\..\lib\bin\x86-Debug\taglib\lib;$(OutputPath)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\Library\vcpkg_installed\x86-windows-static-md\debug\lib;..\..\lib\bin\x86-Debug\taglib\lib;$(OutputPath)</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4248 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
@@ -127,7 +127,7 @@
     <Link>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalDependencies>zlibd.lib;tag.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>E:\Home\Provisoire\vcpkg\installed\x64-windows-static-md\debug\lib;..\..\lib\bin\x64-Debug\taglib\lib;$(OutputPath)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\Library\vcpkg_installed\x64-windows-static-md\debug\lib;..\..\lib\bin\x64-Debug\taglib\lib;$(OutputPath)</AdditionalLibraryDirectories>
       <AdditionalOptions>/ignore:4248 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
@@ -152,7 +152,7 @@
     <Link>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalDependencies>zlib.lib;tag.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>E:\Home\Provisoire\vcpkg\installed\x86-windows-static-md\lib;..\..\lib\bin\x86-Release\taglib\lib;$(OutputPath)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\Library\vcpkg_installed\x86-windows-static-md\lib;..\..\lib\bin\x86-Release\taglib\lib;$(OutputPath)</AdditionalLibraryDirectories>
       <ImageHasSafeExceptionHandlers />
       <OptimizeReferences>
       </OptimizeReferences>
@@ -181,7 +181,7 @@
     <Link>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <AdditionalDependencies>zlib.lib;tag.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>E:\Home\Provisoire\vcpkg\installed\x64-windows-static-md\lib;..\..\lib\bin\x64-Release\taglib\lib;$(OutputPath)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\..\Library\vcpkg_installed\x64-windows-static-md\lib;..\..\lib\bin\x64-Release\taglib\lib;$(OutputPath)</AdditionalLibraryDirectories>
       <ImageHasSafeExceptionHandlers>
       </ImageHasSafeExceptionHandlers>
       <OptimizeReferences>

@@ -31,7 +31,7 @@ public class TaglibTaggerTests
          //TaglibSettings.ID3Latin1Encoding = Encoding.GetEncoding(1252);
       }
 
-      const string folder = @"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test";
+      const string folder = @"E:\Home\Important\Development\Toolkit\Tests\Audio\Tags";
       string path = WorkOnCopy(Path.Combine(folder, filename));
       var tagger = new TaglibTagger(path);
       tagger.ReplaceTag(TagNameKey.Artist, "artist 1", "artist 2");

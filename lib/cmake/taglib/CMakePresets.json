@@ -11,18 +11,20 @@
       "name": "windows-default",
       "description": "Sets common settings for building taglib library",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/out/build/${presetName}",
+      "binaryDir": "D:/Temporaire/Development/IntermediateOutput/cmake/taglib/${presetName}",
       "architecture": {
         "value": "x64",
         "strategy": "external"
       },
       "cacheVariables": {
         "CMAKE_INSTALL_PREFIX": "${sourceDir}/../../bin/${presetName}/taglib",
+        "CMAKE_COMPILE_PDB_OUTPUT_DIRECTORY": "${sourceDir}/../../bin/${presetName}/taglib/lib",
         "CMAKE_C_COMPILER": "cl",
         "CMAKE_CXX_COMPILER": "cl",
         "CMAKE_CXX_FLAGS": "/EHsc",
-        "CMAKE_TOOLCHAIN_FILE": "E:/Home/Provisoire/vcpkg/scripts/buildsystems/vcpkg.cmake", // vcpkg install utfcpp zlib --triplet x64-windows-static-md
+        "CMAKE_TOOLCHAIN_FILE": "D:/Temporaire/Development/vcpkg/scripts/buildsystems/vcpkg.cmake", // vcpkg install utfcpp zlib --triplet x64-windows-static-md --x-install-root=E:\Home\Important\Development\Library\vcpkg_installed
         "VCPKG_TARGET_TRIPLET": "x64-windows-static-md",
+        "VCPKG_INSTALLED_DIR": "${sourceDir}/../../../../../Library/vcpkg_installed",
         "BUILD_BINDINGS": "OFF",
         "BUILD_TESTING": "OFF"
       },
