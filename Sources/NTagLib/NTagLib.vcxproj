@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{680E3C60-AE7F-4119-BBC7-FDAFA1130954}</ProjectGuid>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>NTagLib</RootNamespace>
     <ProjectName>NTagLib</ProjectName>

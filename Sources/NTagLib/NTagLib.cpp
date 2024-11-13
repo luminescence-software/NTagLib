@@ -727,7 +727,7 @@ namespace NTagLib
         void ReadAudioProperties(const TagLib::AudioProperties* properties)
         {
             bitrate = properties->bitrate(); // in kb/s
-            duration = TimeSpan::FromMilliseconds(properties->lengthInMilliseconds());
+            duration = TimeSpan::FromMilliseconds((double)properties->lengthInMilliseconds());
             sampleRate = properties->sampleRate(); // in Hertz
             channels = properties->channels(); // number of audio channels
 

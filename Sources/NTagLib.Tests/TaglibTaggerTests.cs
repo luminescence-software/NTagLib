@@ -72,7 +72,7 @@ public class TaglibTaggerTests
 
       Assert.True(tagger.Bitrate > 0);
       Assert.True(tagger.BitsPerSample is 0 or 16);
-      Assert.True(tagger.Channels == 2);
+      Assert.Equal(2, tagger.Channels);
       Assert.True(tagger.SampleRate is 22_050 or 44_100 or 48_000);
       Assert.True(tagger.Duration > TimeSpan.Zero);
    }
