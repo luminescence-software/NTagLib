@@ -4,10 +4,10 @@ NTagLib is a 64 bits C++/CLI library for tagging audio files with [TagLib](https
 
 **NTagLib requires the [Visual C++ 2022](https://aka.ms/vs/17/release/vc_redist.x64.exe) runtime (x64).**
 
-This library has been designed to be used with my tags editor, [Metatogger](https://www.luminescence-software.org/metatogger).
+This library has been designed to be used with my tags editor, [Metatogger](https://www.luminescence-software.org/en/metatogger/about).
 
 Here is a screenshot of that software:
-![Screenshot of Metatogger](https://www.luminescence-software.org/user/pages/02.metatogger/metatogger_main.png)
+![Screenshot of Metatogger](metatogger_main_fr.png)
 
 Feel free to fork the code and [contribute](https://guides.github.com/activities/contributing-to-open-source/) to NTagLib.
 
