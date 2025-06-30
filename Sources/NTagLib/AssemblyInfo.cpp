@@ -17,5 +17,5 @@ using namespace System::Security::Permissions;
 [assembly:ComVisible(false)];
 [assembly:CLSCompliant(true)];
 
-[assembly:AssemblyVersion("3.0.3.0")];
+[assembly:AssemblyVersion("3.0.4.0")];
 
