@@ -102,11 +102,11 @@ namespace NTagLib
     public ref class PictureTypes abstract sealed
     {
     private:
-        static initonly array<String^>^ types = gcnew array<String^> {
+        static initonly ReadOnlyCollection<String^>^ types = Array::AsReadOnly(gcnew array<String^> {
             Other, FileIcon, OtherFileIcon, FrontCover, BackCover, LeafletPage, Media, LeadArtist,
             Artist, Conductor, Band, Composer, Lyricist, RecordingLocation, DuringRecording, DuringPerformance,
             MovieScreenCapture, ColouredFish, Illustration, BandLogo, PublisherLogo
-        };
+        });
 
     public:
         literal String^ Other = "Other";
@@ -133,16 +133,12 @@ namespace NTagLib
 
         static ReadOnlyCollection<String^>^ GetAllTypes()
         {
-            return Array::AsReadOnly(types);
+            return types;
         }
 
         static String^ Normalize(String^ pictureType)
         {
-            int index = Array::IndexOf(types, pictureType);
-            if (index != -1)
-                return types[index];
-
-            return FrontCover;
+            return types->Contains(pictureType) ? pictureType : FrontCover;
         }
     };
 
@@ -387,25 +383,29 @@ namespace NTagLib
     public ref class TagNameKey abstract sealed
     {
     private:
-        static initonly array<String^>^ names = gcnew array<String^> {
+        static initonly ReadOnlyCollection<String^>^ names = Array::AsReadOnly(gcnew array<String^> {
             AcoustidFingerprint, AcoustidID, Album, AlbumArtist, AlbumArtistSort, AlbumSort, Arranger, Artist, ArtistSort, ArtistWebPage, AudioSourceWebPage,
-                BPM,
-                Comment, Compilation, Composer, ComposerSort, Conductor, Copyright, CopyrightURL,
-                Date, DiscNumber, DiscSubtitle, DJMixer,
-                EncodedBy, Encoding, EncodingTime, Engineer,
-                FileType, FileWebPage,
-                Genre,
-                InitialKey, ISRC,
-                Label, Language, Length, Lyricist, Lyrics,
-                Media, Mixer, Mood, MusicBrainzAlbumArtistID, MusicBrainzAlbumID, MusicBrainzArtistID, MusicBrainzReleaseGroupID, MusicBrainzReleaseTrackID, MusicBrainzTrackID, MusicBrainzWorkID, MusicipPUID,
-                OriginalAlbum, OriginalArtist, OriginalDate, OriginalFilename, OriginalLyricist, Owner,
-                PaymentWebPage, Performer, PlaylistDelay, ProducedNotice, Producer, PublisherWebPage,
-                RadioStation, RadioStationOwner, RadioStationWebPage, ReleaseCountry, ReleaseDate, ReleaseStatus, ReleaseType, Remixer,
-                Subtitle,
-                TaggingDate, Title, TitleSort, TrackNumber,
-                URL,
-                Work
-        };
+            BPM,
+            Comment, Compilation, Composer, ComposerSort, Conductor, Copyright, CopyrightURL,
+            Date, DiscNumber, DiscSubtitle, DJMixer,
+            EncodedBy, Encoding, EncodingTime, Engineer,
+            FileType, FileWebPage,
+            Genre,
+            InitialKey, ISRC,
+            Label, Language, Length, Lyricist, Lyrics,
+            Media, Mixer, Mood, MusicBrainzAlbumArtistID, MusicBrainzAlbumID, MusicBrainzArtistID, MusicBrainzReleaseGroupID, MusicBrainzReleaseTrackID, MusicBrainzTrackID, MusicBrainzWorkID, MusicipPUID,
+            OriginalAlbum, OriginalArtist, OriginalDate, OriginalFilename, OriginalLyricist, Owner,
+            PaymentWebPage, Performer, PlaylistDelay, ProducedNotice, Producer, PublisherWebPage,
+            RadioStation, RadioStationOwner, RadioStationWebPage, ReleaseCountry, ReleaseDate, ReleaseStatus, ReleaseType, Remixer,
+            Subtitle,
+            TaggingDate, Title, TitleSort, TrackNumber,
+            URL,
+            Work
+        });
+
+        static initonly ReadOnlyCollection<String^>^ unsupportedFramesId3v23 = Array::AsReadOnly(gcnew array<String^> {
+            ReleaseDate, TaggingDate, Mood, ProducedNotice, AlbumSort, TitleSort, ArtistSort
+        });
 
     public:
         literal String^ AcoustidFingerprint = "ACOUSTID_FINGERPRINT"; // TXXX
@@ -486,12 +486,20 @@ namespace NTagLib
 
         static ReadOnlyCollection<String^>^ GetAllNames()
         {
-            return Array::AsReadOnly(names);
+            return names;
+        }
+
+        static ReadOnlyCollection<String^>^ GetUnsupportedId3v23Frames()
+        {
+            return unsupportedFramesId3v23;
         }
     };
 
     public ref class ID3v1GenresCollection sealed : List<String^>
     {
+    private:
+        static initonly ReadOnlyCollection<String^>^ allGenres = (gcnew ID3v1GenresCollection(true))->AsReadOnly();
+
     public:
         ID3v1GenresCollection(bool sort)
         {
@@ -504,6 +512,11 @@ namespace NTagLib
         }
 
         ID3v1GenresCollection() : ID3v1GenresCollection(true) { }
+
+        static ReadOnlyCollection<String^>^ GetAllGenres()
+        {
+            return allGenres;
+        }
     };
 
     [AttributeUsage(AttributeTargets::Class, AllowMultiple = true)]
@@ -831,12 +844,11 @@ namespace NTagLib
             if (tagVersion > maxVersion)
                 tagVersion = maxVersion;
 
-            array<String^>^ unsupportedFramesId3v23 = { TagNameKey::ReleaseDate, TagNameKey::TaggingDate, TagNameKey::Mood, TagNameKey::ProducedNotice, TagNameKey::AlbumSort, TagNameKey::TitleSort, TagNameKey::ArtistSort };
-            if (tagVersion < TagLib::ID3v2::Version::v4 && Enumerable::Any<String^>(unsupportedFramesId3v23, gcnew Func<String^, bool>(tags, &Dictionary<String^, List<String^>^>::ContainsKey)))
+            if (tagVersion < TagLib::ID3v2::Version::v4 && Enumerable::Any<String^>(TagNameKey::GetUnsupportedId3v23Frames(), gcnew Func<String^, bool>(tags, &Dictionary<String^, List<String^>^>::ContainsKey)))
                 tagVersion = TagLib::ID3v2::Version::v4;
 
             List<String^>^ genres;
-            if (tagVersion < TagLib::ID3v2::Version::v4 && tags->TryGetValue(TagNameKey::Genre, genres) && Enumerable::Any<String^>(Enumerable::Except<String^>(genres, gcnew ID3v1GenresCollection())))
+            if (tagVersion < TagLib::ID3v2::Version::v4 && tags->TryGetValue(TagNameKey::Genre, genres) && Enumerable::Any<String^>(Enumerable::Except<String^>(genres, ID3v1GenresCollection::GetAllGenres())))
                 tagVersion = TagLib::ID3v2::Version::v4;
 
             file.save(2, TagLib::File::StripTags::StripOthers, tagVersion, TagLib::File::DuplicateTags::DoNotDuplicate);
@@ -1080,7 +1092,7 @@ namespace NTagLib
             List<String^>^ tagValues;
             if (tags->TryGetValue(tag, tagValues))
             {
-                for each (String ^ value in values)
+                for each (String^ value in values)
                 {
                     if (!tagValues->Contains(value))
                         tagValues->Add(value);
