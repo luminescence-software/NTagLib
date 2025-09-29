@@ -11,11 +11,11 @@ using namespace System::Security::Permissions;
 [assembly:AssemblyConfiguration("")];
 [assembly:AssemblyCompany("Sylvain Rougeaux")];
 [assembly:AssemblyProduct("NTagLib")];
-[assembly:AssemblyCopyright("Sylvain Rougeaux, © 2019-2024")];
+[assembly:AssemblyCopyright("Sylvain Rougeaux, © 2019-2025")];
 [assembly:AssemblyTrademark("")];
 [assembly:AssemblyCulture("")];
 [assembly:ComVisible(false)];
 [assembly:CLSCompliant(true)];
 
-[assembly:AssemblyVersion("3.0.4.0")];
+[assembly:AssemblyVersion("3.0.5.0")];
 
