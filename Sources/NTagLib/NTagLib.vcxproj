@@ -211,9 +211,13 @@
     <ClCompile Include="NTagLib.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="NTagLibStrings.de.resx" />
+    <EmbeddedResource Include="NTagLibStrings.de.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="NTagLibStrings.es.resx" />
-    <EmbeddedResource Include="NTagLibStrings.fr.resx" />
+    <EmbeddedResource Include="NTagLibStrings.fr.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="NTagLibStrings.it.resx" />
     <EmbeddedResource Include="NTagLibStrings.nl.resx" />
     <EmbeddedResource Include="NTagLibStrings.resx">

@@ -118,21 +118,21 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CannotDecodeAudio" xml:space="preserve">
-    <value>Il dato audio non può essere decodificato per la riproduzione ({0}).</value>
+    <value>音频数据无法解码播放 ({0})。</value>
   </data>
   <data name="CannotOpenFile" xml:space="preserve">
-    <value>Il file non può essere aperto. Assicurati che non sia in uso o bloccato da un altro programma.</value>
+    <value>该文件无法打开。 确保它未被使用或被另一个程序锁定。</value>
   </data>
   <data name="CannotWriteFile" xml:space="preserve">
-    <value>Il file non può essere salvato. Assicurati che non sia in sola lettura, in uso o bloccato da un altro programma.</value>
+    <value>无法保存文件。 确保它不是只读的，正在使用或被另一个程序锁定。</value>
   </data>
   <data name="FileFormatNotSupported" xml:space="preserve">
-    <value>Il formato del file non è supportato.</value>
+    <value>不支持文件格式。</value>
   </data>
   <data name="FileNotFound" xml:space="preserve">
-    <value>File non trovato.</value>
+    <value>找不到文件。</value>
   </data>
   <data name="InvalidAudioFile" xml:space="preserve">
-    <value>Il file non è conforme alle specifiche del formato.</value>
+    <value>该文件不符合预期的文件格式规范。</value>
   </data>
 </root>
