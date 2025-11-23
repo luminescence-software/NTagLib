@@ -2,25 +2,20 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Xunit;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace NTagLib.Tests;
 
+[TestClass]
 public class TaglibTaggerTests
 {
-   //private readonly ITestOutputHelper output;
-   //public TaglibTaggerTests(ITestOutputHelper outputHelper)
-   //{
-   //    output = outputHelper;
-   //}
-
-   [Theory]
-   [InlineData("flac.flac")]
-   [InlineData("mp3.mp3")]
-   [InlineData("vorbis.ogg")]
-   [InlineData("wma.wma")]
-   [InlineData("aac.m4a")]
-   [InlineData("opus.opus")]
+   [TestMethod]
+   [DataRow("flac.flac")]
+   [DataRow("mp3.mp3")]
+   [DataRow("vorbis.ogg")]
+   [DataRow("wma.wma")]
+   [DataRow("aac.m4a")]
+   [DataRow("opus.opus")]
    public void WriteTags(string filename)
    {
       AudioFileFormat format = AudioFileFormats.FromExtension(filename);
@@ -46,35 +41,35 @@ public class TaglibTaggerTests
       Picture? picture = tagger.Pictures.FirstOrDefault();
 
       if (format == AudioFileFormat.Wma)
-         Assert.True(tagger.Tags.TryGetValue(TagNameKey.Artist, out var artists) && artists.Count == 1 && artists.Contains("artist 1 artist 2"));
+         Assert.IsTrue(tagger.Tags.TryGetValue(TagNameKey.Artist, out var artists) && artists.Count == 1 && artists.Contains("artist 1 artist 2"));
       else
-         Assert.True(tagger.Tags.TryGetValue(TagNameKey.Artist, out var artists) && artists.Count == 2 && artists.Contains("artist 1") && artists.Contains("artist 2"));
+         Assert.IsTrue(tagger.Tags.TryGetValue(TagNameKey.Artist, out var artists) && artists.Count == 2 && artists.Contains("artist 1") && artists.Contains("artist 2"));
 
       if (!rejectedTags.Contains("FAKE"))
-         Assert.True(tagger.Tags.TryGetValue("FAKE", out var fakes) && fakes.Contains("toto"));
+         Assert.IsTrue(tagger.Tags.TryGetValue("FAKE", out var fakes) && fakes.Contains("toto"));
 
-      Assert.True(picture != null && picture.Data.SequenceEqual(data) && picture is { PictureType: PictureTypes.FrontCover, MimeType: MimeTypes.JPEG, Description: "" });
+      Assert.IsTrue(picture != null && picture.Data.SequenceEqual(data) && picture is { PictureType: PictureTypes.FrontCover, MimeType: MimeTypes.JPEG, Description: "" });
 
       File.Delete(path);
    }
 
-   [Theory]
-   [InlineData("flac.flac")]
-   [InlineData("mp3.mp3")]
-   [InlineData("vorbis.ogg")]
-   [InlineData("wma.wma")]
-   [InlineData("aac.m4a")]
-   [InlineData("opus.opus")]
+   [TestMethod]
+   [DataRow("flac.flac")]
+   [DataRow("mp3.mp3")]
+   [DataRow("vorbis.ogg")]
+   [DataRow("wma.wma")]
+   [DataRow("aac.m4a")]
+   [DataRow("opus.opus")]
    public void ReadAudioProperties(string filename)
    {
       const string folder = @"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test";
       var tagger = new TaglibTagger(Path.Combine(folder, filename));
 
-      Assert.True(tagger.Bitrate > 0);
-      Assert.True(tagger.BitsPerSample is 0 or 16);
-      Assert.Equal(2, tagger.Channels);
-      Assert.True(tagger.SampleRate is 22_050 or 44_100 or 48_000);
-      Assert.True(tagger.Duration > TimeSpan.Zero);
+      Assert.IsGreaterThan(0, tagger.Bitrate);
+      Assert.IsTrue(tagger.BitsPerSample is 0 or 16);
+      Assert.AreEqual(2, tagger.Channels);
+      Assert.IsTrue(tagger.SampleRate is 22_050 or 44_100 or 48_000);
+      Assert.IsTrue(tagger.Duration > TimeSpan.Zero);
    }
 
    private static string WorkOnCopy(string path)
