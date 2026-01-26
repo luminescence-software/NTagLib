@@ -26,7 +26,7 @@ public class TaglibTaggerTests
          //TaglibSettings.ID3Latin1Encoding = Encoding.GetEncoding(1252);
       }
 
-      const string folder = @"E:\Home\Important\Development\Toolkit\Tests\Audio\Tags";
+      const string folder = @"D:\Home\Important\Development\Toolkit\Tests\Audio\Tags";
       string path = WorkOnCopy(Path.Combine(folder, filename));
       var tagger = new TaglibTagger(path);
       tagger.ReplaceTag(TagNameKey.Artist, "artist 1", "artist 2");
@@ -62,7 +62,7 @@ public class TaglibTaggerTests
    [DataRow("opus.opus")]
    public void ReadAudioProperties(string filename)
    {
-      const string folder = @"E:\Home\Important\Development\Toolkit\Conception\NTagLib\Test";
+      const string folder = @"D:\Home\Important\Development\Toolkit\Conception\NTagLib\Test";
       var tagger = new TaglibTagger(Path.Combine(folder, filename));
 
       Assert.IsGreaterThan(0, tagger.Bitrate);
