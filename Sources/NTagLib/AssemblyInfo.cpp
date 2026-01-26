@@ -11,7 +11,7 @@ using namespace System::Security::Permissions;
 [assembly:AssemblyConfiguration("")];
 [assembly:AssemblyCompany("Sylvain Rougeaux")];
 [assembly:AssemblyProduct("NTagLib")];
-[assembly:AssemblyCopyright("Sylvain Rougeaux, © 2019-2025")];
+[assembly:AssemblyCopyright("Sylvain Rougeaux, © 2019-2026")];
 [assembly:AssemblyTrademark("")];
 [assembly:AssemblyCulture("")];
 [assembly:ComVisible(false)];
