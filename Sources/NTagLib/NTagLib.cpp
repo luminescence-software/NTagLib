@@ -61,29 +61,14 @@ namespace
         return tags;
     }
 
-    array<byte>^ ByteVectorToManagedArray(const TagLib::ByteVector& data, bool trimZero)
+    array<byte>^ ByteVectorToManagedArray(const TagLib::ByteVector& data)
     {
         if (data.size() == 0)
             return Array::Empty<byte>();
 
-        int offset = 0;
-        if (trimZero)
-        {
-            for (auto it = data.begin(); it != data.end(); ++it)
-            {
-                if (*it == 0)
-                    offset++;
-                else
-                    break;
-            }
-
-            if (data.size() == offset)
-                return Array::Empty<byte>();
-        }
-
-        auto buffer = gcnew array<byte>(data.size() - offset);
+        auto buffer = gcnew array<byte>(data.size());
         for (int i = 0; i < buffer->Length; i++)
-            buffer[i] = data[i + offset];
+            buffer[i] = data[i];
 
         return buffer;
     }
@@ -161,6 +146,7 @@ namespace NTagLib
         literal String^ GIF = "image/gif";
         literal String^ BMP = "image/bmp";
         literal String^ WebP = "image/webp";
+        literal String^ AVIF = "image/avif";
         literal String^ Unknown = "application/octet-stream";
 
         static String^ Normalize(String^ mimeType, array<byte>^ data)
@@ -175,6 +161,9 @@ namespace NTagLib
 
                 if (mimeType->Contains("webp", StringComparison::OrdinalIgnoreCase))
                     return WebP;
+
+                if (mimeType->Contains("avif", StringComparison::OrdinalIgnoreCase))
+                    return AVIF;
 
                 if (mimeType->Contains("gif", StringComparison::OrdinalIgnoreCase))
                     return GIF;
@@ -193,13 +182,13 @@ namespace NTagLib
         {
             // https://en.wikipedia.org/wiki/List_of_file_signatures
 
-            if (data->Length > 3 &&
+            if (data->Length >= 3 &&
                 data[0] == 0xFF &&
                 data[1] == 0xD8 &&
                 data[2] == 0xFF)
                 return JPEG;
 
-            if (data->Length > 8 &&
+            if (data->Length >= 8 &&
                 data[0] == 0x89 &&
                 data[1] == 0x50 &&
                 data[2] == 0x4E &&
@@ -210,7 +199,7 @@ namespace NTagLib
                 data[7] == 0x0A)
                 return PNG;
 
-            if (data->Length > 12 &&
+            if (data->Length >= 12 &&
                 data[0] == 0x52 &&
                 data[1] == 0x49 &&
                 data[2] == 0x46 &&
@@ -221,14 +210,25 @@ namespace NTagLib
                 data[11] == 0x50)
                 return WebP;
 
-            if (data->Length > 4 &&
+            if (data->Length >= 12 &&
+                data[4] == 0x66 &&
+                data[5] == 0x74 &&
+                data[6] == 0x79 &&
+                data[7] == 0x70 &&
+                data[8] == 0x61 &&
+                data[9] == 0x76 &&
+                data[10] == 0x69 &&
+                data[11] == 0x66)
+                return AVIF;
+
+            if (data->Length >= 4 &&
                 data[0] == 0x47 &&
                 data[1] == 0x49 &&
                 data[2] == 0x46 &&
                 data[3] == 0x38)
                 return GIF;
 
-            if (data->Length > 2 &&
+            if (data->Length >= 2 &&
                 data[0] == 0x42 &&
                 data[1] == 0x4D)
                 return BMP;
@@ -251,7 +251,7 @@ namespace NTagLib
             if (data.isEmpty())
                 throw gcnew ArgumentException("The picture data is empty.");
 
-            _data = ByteVectorToManagedArray(data, true);
+            _data = ByteVectorToManagedArray(data);
             _mimeType = MimeTypes::Normalize(gcnew String(mimeType.toCString()), _data);
             _pictureType = PictureTypes::Normalize(gcnew String(pictureType.toCString()));
             _description = description.isEmpty() ? String::Empty : gcnew String(description.toCWString());
