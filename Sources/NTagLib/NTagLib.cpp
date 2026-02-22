@@ -160,7 +160,7 @@ namespace NTagLib
                     return JPEG;
 
                 if (mimeType->Contains("png", StringComparison::OrdinalIgnoreCase))
-                    return JPEG;
+                    return PNG;
 
                 if (mimeType->Contains("webp", StringComparison::OrdinalIgnoreCase))
                     return WebP;
