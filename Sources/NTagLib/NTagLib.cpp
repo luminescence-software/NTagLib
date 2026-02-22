@@ -1,23 +1,34 @@
 ﻿#include "stdafx.h"
 
 #include <asffile.h>
+#include <asfproperties.h>
+#include <audioproperties.h>
 #include <flacfile.h>
 #include <flacproperties.h>
 #include <id3v1genres.h>
 #include <id3v1tag.h>
+#include <id3v2.h>
 #include <id3v2tag.h>
 #include <mp4file.h>
+#include <mp4properties.h>
 #include <mpegfile.h>
-#include <opusfile.h>
-#include <taglib.h>
-#include <tpropertymap.h>
-#include <tstring.h>
-#include <tvariant.h>
-#include <vorbisfile.h>
-#include <xiphcomment.h>
-
 #include <msclr/marshal.h>
 #include <msclr/marshal_cppstd.h>
+#include <new>
+#include <opusfile.h>
+#include <string>
+#include <taglib.h>
+#include <tbytevector.h>
+#include <tfile.h>
+#include <tiostream.h>
+#include <tlist.h>
+#include <tpropertymap.h>
+#include <tstring.h>
+#include <tstringlist.h>
+#include <tvariant.h>
+#include <vorbisfile.h>
+#include <windows.h>
+#include <xiphcomment.h>
 
 using namespace System;
 using namespace System::IO;
