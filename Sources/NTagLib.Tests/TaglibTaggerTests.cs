@@ -9,6 +9,8 @@ namespace NTagLib.Tests;
 [TestClass]
 public class TaglibTaggerTests
 {
+   private const string TestAudioFilesDirectory = @"D:\Home\Important\Development\Toolkit\Tests\Audio\Tags";
+
    [TestMethod]
    [DataRow("flac.flac")]
    [DataRow("mp3.mp3")]
@@ -26,13 +28,12 @@ public class TaglibTaggerTests
          //TaglibSettings.ID3Latin1Encoding = Encoding.GetEncoding(1252);
       }
 
-      const string folder = @"D:\Home\Important\Development\Toolkit\Tests\Audio\Tags";
-      string path = WorkOnCopy(Path.Combine(folder, filename));
+      string path = WorkOnCopy(Path.Combine(TestAudioFilesDirectory, filename));
       var tagger = new TaglibTagger(path);
       tagger.ReplaceTag(TagNameKey.Artist, "artist 1", "artist 2");
       tagger.AddTag("FAKE", "toto");
 
-      byte[] data = File.ReadAllBytes(Path.Combine(folder, "cover.jpg"));
+      byte[] data = File.ReadAllBytes(Path.Combine(TestAudioFilesDirectory, "cover.jpg"));
       tagger.Pictures.Clear();
       tagger.Pictures.Add(new Picture(data, MimeTypes.JPEG, PictureTypes.FrontCover, String.Empty));
       IEnumerable<string> rejectedTags = tagger.SaveTags();
@@ -62,8 +63,7 @@ public class TaglibTaggerTests
    [DataRow("opus.opus")]
    public void ReadAudioProperties(string filename)
    {
-      const string folder = @"D:\Home\Important\Development\Toolkit\Conception\NTagLib\Test";
-      var tagger = new TaglibTagger(Path.Combine(folder, filename));
+      var tagger = new TaglibTagger(Path.Combine(TestAudioFilesDirectory, filename));
 
       Assert.IsGreaterThan(0, tagger.Bitrate);
       Assert.IsTrue(tagger.BitsPerSample is 0 or 16);
