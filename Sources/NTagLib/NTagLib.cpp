@@ -149,6 +149,7 @@ namespace NTagLib
         literal String^ PNG = "image/png";
         literal String^ GIF = "image/gif";
         literal String^ BMP = "image/bmp";
+        literal String^ WebP = "image/webp";
         literal String^ Unknown = "application/octet-stream";
 
         static String^ Normalize(String^ mimeType, array<byte>^ data)
@@ -160,6 +161,9 @@ namespace NTagLib
 
                 if (mimeType->Contains("png", StringComparison::OrdinalIgnoreCase))
                     return JPEG;
+
+                if (mimeType->Contains("webp", StringComparison::OrdinalIgnoreCase))
+                    return WebP;
 
                 if (mimeType->Contains("gif", StringComparison::OrdinalIgnoreCase))
                     return GIF;
@@ -194,6 +198,17 @@ namespace NTagLib
                 data[6] == 0x1A &&
                 data[7] == 0x0A)
                 return PNG;
+
+            if (data->Length > 12 &&
+                data[0] == 0x52 &&
+                data[1] == 0x49 &&
+                data[2] == 0x46 &&
+                data[3] == 0x46 &&
+                data[8] == 0x57 &&
+                data[9] == 0x45 &&
+                data[10] == 0x42 &&
+                data[11] == 0x50)
+                return WebP;
 
             if (data->Length > 4 &&
                 data[0] == 0x47 &&
