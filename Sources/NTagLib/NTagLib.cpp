@@ -17,6 +17,7 @@
 #include <new>
 #include <opusfile.h>
 #include <string>
+#include <string.h>
 #include <taglib.h>
 #include <tbytevector.h>
 #include <tfile.h>
@@ -41,7 +42,7 @@ using namespace System::Resources;
 
 namespace
 {
-    #pragma region Interop functions
+#pragma region Interop functions
 
     void throw_out_of_memory_exception()
     {
@@ -56,7 +57,7 @@ namespace
         auto tags = gcnew array<String^>(properties.size());
         int i = 0;
         for (auto it = properties.begin(); it != properties.end(); ++it, ++i)
-           tags[i] = gcnew String(it->first.toCWString());
+            tags[i] = gcnew String(it->first.toCWString());
 
         return tags;
     }
@@ -67,9 +68,8 @@ namespace
             return Array::Empty<byte>();
 
         auto buffer = gcnew array<byte>(data.size());
-        for (int i = 0; i < buffer->Length; i++)
-            buffer[i] = data[i];
-
+        const pin_ptr<byte> p = &buffer[0];
+        memcpy(p, data.data(), data.size());
         return buffer;
     }
 
@@ -88,21 +88,23 @@ namespace
         return buffer;
     }
 
-    #pragma endregion
+#pragma endregion
 }
 
 namespace NTagLib
 {
-    #pragma region Cover support
+#pragma region Cover support
 
     public ref class PictureTypes abstract sealed
     {
     private:
         static initonly ReadOnlyCollection<String^>^ types = Array::AsReadOnly(gcnew array<String^> {
             Other, FileIcon, OtherFileIcon, FrontCover, BackCover, LeafletPage, Media, LeadArtist,
-            Artist, Conductor, Band, Composer, Lyricist, RecordingLocation, DuringRecording, DuringPerformance,
-            MovieScreenCapture, ColouredFish, Illustration, BandLogo, PublisherLogo
+                Artist, Conductor, Band, Composer, Lyricist, RecordingLocation, DuringRecording, DuringPerformance,
+                MovieScreenCapture, ColouredFish, Illustration, BandLogo, PublisherLogo
         });
+
+        static initonly HashSet<String^>^ typesLookup = gcnew HashSet<String^>(types, StringComparer::Ordinal);
 
     public:
         literal String^ Other = "Other";
@@ -134,7 +136,7 @@ namespace NTagLib
 
         static String^ Normalize(String^ pictureType)
         {
-            return types->Contains(pictureType) ? pictureType : FrontCover;
+            return typesLookup->Contains(pictureType) ? pictureType : FrontCover;
         }
     };
 
@@ -277,9 +279,9 @@ namespace NTagLib
         property String^ Description { String^ get() { return _description; } }
     };
 
-    #pragma endregion
+#pragma endregion
 
-    #pragma region Helper classes
+#pragma region Helper classes
 
     class ID3StringHandler final : public TagLib::ID3v2::Latin1StringHandler, public TagLib::ID3v1::StringHandler
     {
@@ -296,7 +298,7 @@ namespace NTagLib
         }
 
     public:
-        explicit ID3StringHandler(int cp = 0) : codepage(cp) { }
+        explicit ID3StringHandler(int cp = 0) : codepage(cp) {}
 
         TagLib::String parse(const TagLib::ByteVector& data) const override
         {
@@ -411,22 +413,22 @@ namespace NTagLib
     private:
         static initonly ReadOnlyCollection<String^>^ names = Array::AsReadOnly(gcnew array<String^> {
             AcoustidFingerprint, AcoustidID, Album, AlbumArtist, AlbumArtistSort, AlbumSort, Arranger, Artist, ArtistSort, ArtistWebPage, AudioSourceWebPage,
-            BPM,
-            Comment, Compilation, Composer, ComposerSort, Conductor, Copyright, CopyrightURL,
-            Date, DiscNumber, DiscSubtitle, DJMixer,
-            EncodedBy, Encoding, EncodingTime, Engineer,
-            FileType, FileWebPage,
-            Genre,
-            InitialKey, ISRC,
-            Label, Language, Length, Lyricist, Lyrics,
-            Media, Mixer, Mood, MusicBrainzAlbumArtistID, MusicBrainzAlbumID, MusicBrainzArtistID, MusicBrainzReleaseGroupID, MusicBrainzReleaseTrackID, MusicBrainzTrackID, MusicBrainzWorkID, MusicipPUID,
-            OriginalAlbum, OriginalArtist, OriginalDate, OriginalFilename, OriginalLyricist, Owner,
-            PaymentWebPage, Performer, PlaylistDelay, ProducedNotice, Producer, PublisherWebPage,
-            RadioStation, RadioStationOwner, RadioStationWebPage, ReleaseCountry, ReleaseDate, ReleaseStatus, ReleaseType, Remixer,
-            Subtitle,
-            TaggingDate, Title, TitleSort, TrackNumber,
-            URL,
-            Work
+                BPM,
+                Comment, Compilation, Composer, ComposerSort, Conductor, Copyright, CopyrightURL,
+                Date, DiscNumber, DiscSubtitle, DJMixer,
+                EncodedBy, Encoding, EncodingTime, Engineer,
+                FileType, FileWebPage,
+                Genre,
+                InitialKey, ISRC,
+                Label, Language, Length, Lyricist, Lyrics,
+                Media, Mixer, Mood, MusicBrainzAlbumArtistID, MusicBrainzAlbumID, MusicBrainzArtistID, MusicBrainzReleaseGroupID, MusicBrainzReleaseTrackID, MusicBrainzTrackID, MusicBrainzWorkID, MusicipPUID,
+                OriginalAlbum, OriginalArtist, OriginalDate, OriginalFilename, OriginalLyricist, Owner,
+                PaymentWebPage, Performer, PlaylistDelay, ProducedNotice, Producer, PublisherWebPage,
+                RadioStation, RadioStationOwner, RadioStationWebPage, ReleaseCountry, ReleaseDate, ReleaseStatus, ReleaseType, Remixer,
+                Subtitle,
+                TaggingDate, Title, TitleSort, TrackNumber,
+                URL,
+                Work
         });
 
         static initonly ReadOnlyCollection<String^>^ unsupportedFramesId3v23 = Array::AsReadOnly(gcnew array<String^> {
@@ -537,7 +539,7 @@ namespace NTagLib
                 Sort();
         }
 
-        ID3v1GenresCollection() : ID3v1GenresCollection(true) { }
+        ID3v1GenresCollection() : ID3v1GenresCollection(true) {}
 
         static ReadOnlyCollection<String^>^ GetAllGenres()
         {
@@ -546,7 +548,7 @@ namespace NTagLib
     };
 
     [AttributeUsage(AttributeTargets::Class, AllowMultiple = true)]
-    public ref class FileFormatAttribute sealed : Attribute
+        public ref class FileFormatAttribute sealed : Attribute
     {
     private:
         initonly AudioFileFormat _format;
@@ -563,25 +565,25 @@ namespace NTagLib
 
     // FileFormatException has been moved from System.IO.dll to System.IO.Packaging.dll, and is no longer .NET built-in.
     [Serializable]
-    public ref class InvalidFileFormatException : /*File*/FormatException
+        public ref class InvalidFileFormatException : /*File*/FormatException
     {
     public:
-        InvalidFileFormatException(String^ message) : FormatException(message) { }
+        InvalidFileFormatException(String^ message) : FormatException(message) {}
     };
 
     [Serializable]
-    public ref class NotSupportedFileFormatException : /*File*/FormatException
+        public ref class NotSupportedFileFormatException : /*File*/FormatException
     {
     public:
-        NotSupportedFileFormatException(String^ message) : FormatException(message) { }
+        NotSupportedFileFormatException(String^ message) : FormatException(message) {}
     };
 
-    #pragma endregion
+#pragma endregion
 }
 
 namespace
 {
-    #pragma region Helper functions
+#pragma region Helper functions
 
     TagLib::PropertyMap GetPropertiesFromTags(Dictionary<String^, List<String^>^>^ tags)
     {
@@ -656,12 +658,12 @@ namespace
         return pictures;
     }
 
-    #pragma endregion
+#pragma endregion
 }
 
 namespace NTagLib
 {
-    #pragma region TaglibTagger class
+#pragma region TaglibTagger class
 
     constexpr auto PICTURE_KEY = "PICTURE";
 
@@ -687,36 +689,17 @@ namespace NTagLib
         Dictionary<String^, List<String^>^>^ tags;
         List<Picture^>^ pictures;
 
+        static initonly Dictionary<String^, String^>^ s_vorbisVersionMap;
+        static initonly HashSet<String^>^ s_id3v1GenresSet;
+
         static String^ GetVorbisVersionFromVendor(String^ vendor)
         {
-            if (vendor->StartsWith("AO; aoTuV")) return "Vorbis aoTuV";
+            if (vendor->StartsWith("AO; aoTuV"))
+                return "Vorbis aoTuV";
 
-            if (vendor == "Xiphophorus libVorbis I 20000508") return "Vorbis 1.0 Beta 1/2";
-            if (vendor == "Xiphophorus libVorbis I 20001031") return "Vorbis 1.0 Beta 3";
-            if (vendor == "Xiphophorus libVorbis I 20010225") return "Vorbis 1.0 Beta 4";
-            if (vendor == "Xiphophorus libVorbis I 20010615") return "Vorbis 1.0 RC1";
-            if (vendor == "Xiphophorus libVorbis I 20010813") return "Vorbis 1.0 RC2";
-            if (vendor == "Xiphophorus libVorbis I 20011217") return "Vorbis 1.0 RC3";
-            if (vendor == "Xiphophorus libVorbis I 20011231") return "Vorbis 1.0 RC3";
-
-            // https://gitlab.xiph.org/xiph/vorbis/-/blob/master/CHANGES
-            if (vendor == "Xiph.Org libVorbis I 20020717") return "Vorbis 1.0.0";
-            if (vendor == "Xiph.Org libVorbis I 20030909") return "Vorbis 1.0.1";
-            if (vendor == "Xiph.Org libVorbis I 20040629") return "Vorbis 1.1.0";
-            if (vendor == "Xiph.Org libVorbis I 20050304") return "Vorbis 1.1.1/2";
-            if (vendor == "Xiph.Org libVorbis I 20070622") return "Vorbis 1.2.0";
-            if (vendor == "Xiph.Org libVorbis I 20080501") return "Vorbis 1.2.1";
-            if (vendor == "Xiph.Org libVorbis I 20090624") return "Vorbis 1.2.2";
-            if (vendor == "Xiph.Org libVorbis I 20090709") return "Vorbis 1.2.3";
-            if (vendor == "Xiph.Org libVorbis I 20100325 (Everywhere)") return "Vorbis 1.3.1";
-            if (vendor == "Xiph.Org libVorbis I 20101101 (Schaufenugget)") return "Vorbis 1.3.2";
-            if (vendor == "Xiph.Org libVorbis I 20120203 (Omnipresent)") return "Vorbis 1.3.3";
-            if (vendor == "Xiph.Org libVorbis I 20140122 (Turpakäräjiin)") return "Vorbis 1.3.4";
-            if (vendor == L"Xiph.Org libVorbis I 20150105 (⛄⛄⛄⛄)") return "Vorbis 1.3.5";
-            if (vendor == L"Xiph.Org libVorbis I 20180316 (Now 100% fewer shells)") return "Vorbis 1.3.6";
-            if (vendor == L"Xiph.Org libVorbis I 20200704 (Reducing Environment)") return "Vorbis 1.3.7";
-
-            return nullptr;
+            String^ version;
+            s_vorbisVersionMap->TryGetValue(vendor, version);
+            return version;
         }
 
         static void VerifyFile(const TagLib::File& file, bool writeAccessRequired)
@@ -776,7 +759,7 @@ namespace NTagLib
 
         void ReadMp3FileCore(String^ path)
         {
-            const ID3StringHandler id3StringHandler(TaglibSettings::ID3Latin1Encoding->CodePage);
+            const ID3StringHandler id3StringHandler(TaglibSettings::ID3Latin1Encoding->CodePage); // id3StringHandler must be alive during the whole method scope
             if (TaglibSettings::OverrideID3Latin1EncodingCodepage)
             {
                 TagLib::ID3v2::Tag::setLatin1StringHandler(&id3StringHandler);
@@ -870,12 +853,30 @@ namespace NTagLib
             if (tagVersion > maxVersion)
                 tagVersion = maxVersion;
 
-            if (tagVersion < TagLib::ID3v2::Version::v4 && Enumerable::Any<String^>(TagNameKey::GetUnsupportedId3v23Frames(), gcnew Func<String^, bool>(tags, &Dictionary<String^, List<String^>^>::ContainsKey)))
-                tagVersion = TagLib::ID3v2::Version::v4;
+            if (tagVersion < TagLib::ID3v2::Version::v4)
+            {
+                for each (String^ frame in TagNameKey::GetUnsupportedId3v23Frames())
+                {
+                    if (tags->ContainsKey(frame))
+                    {
+                        tagVersion = TagLib::ID3v2::Version::v4;
+                        break;
+                    }
+                }
+            }
 
             List<String^>^ genres;
-            if (tagVersion < TagLib::ID3v2::Version::v4 && tags->TryGetValue(TagNameKey::Genre, genres) && Enumerable::Any<String^>(Enumerable::Except<String^>(genres, ID3v1GenresCollection::GetAllGenres())))
-                tagVersion = TagLib::ID3v2::Version::v4;
+            if (tagVersion < TagLib::ID3v2::Version::v4 && tags->TryGetValue(TagNameKey::Genre, genres))
+            {
+                for each (String^ genre in genres)
+                {
+                    if (!s_id3v1GenresSet->Contains(genre))
+                    {
+                        tagVersion = TagLib::ID3v2::Version::v4;
+                        break;
+                    }
+                }
+            }
 
             file.save(2, TagLib::File::StripTags::StripOthers, tagVersion, TagLib::File::DuplicateTags::DoNotDuplicate);
             return Enumerable::Empty<String^>();
@@ -1025,6 +1026,33 @@ namespace NTagLib
         static TaglibTagger()
         {
             std::set_new_handler(throw_out_of_memory_exception);
+
+            s_id3v1GenresSet = gcnew HashSet<String^>(ID3v1GenresCollection::GetAllGenres(), StringComparer::Ordinal);
+
+            // https://gitlab.xiph.org/xiph/vorbis/-/blob/master/CHANGES
+            s_vorbisVersionMap = gcnew Dictionary<String^, String^>(22);
+            s_vorbisVersionMap->Add("Xiphophorus libVorbis I 20000508", "Vorbis 1.0 Beta 1/2");
+            s_vorbisVersionMap->Add("Xiphophorus libVorbis I 20001031", "Vorbis 1.0 Beta 3");
+            s_vorbisVersionMap->Add("Xiphophorus libVorbis I 20010225", "Vorbis 1.0 Beta 4");
+            s_vorbisVersionMap->Add("Xiphophorus libVorbis I 20010615", "Vorbis 1.0 RC1");
+            s_vorbisVersionMap->Add("Xiphophorus libVorbis I 20010813", "Vorbis 1.0 RC2");
+            s_vorbisVersionMap->Add("Xiphophorus libVorbis I 20011217", "Vorbis 1.0 RC3");
+            s_vorbisVersionMap->Add("Xiphophorus libVorbis I 20011231", "Vorbis 1.0 RC3");
+            s_vorbisVersionMap->Add("Xiph.Org libVorbis I 20020717", "Vorbis 1.0.0");
+            s_vorbisVersionMap->Add("Xiph.Org libVorbis I 20030909", "Vorbis 1.0.1");
+            s_vorbisVersionMap->Add("Xiph.Org libVorbis I 20040629", "Vorbis 1.1.0");
+            s_vorbisVersionMap->Add("Xiph.Org libVorbis I 20050304", "Vorbis 1.1.1/2");
+            s_vorbisVersionMap->Add("Xiph.Org libVorbis I 20070622", "Vorbis 1.2.0");
+            s_vorbisVersionMap->Add("Xiph.Org libVorbis I 20080501", "Vorbis 1.2.1");
+            s_vorbisVersionMap->Add("Xiph.Org libVorbis I 20090624", "Vorbis 1.2.2");
+            s_vorbisVersionMap->Add("Xiph.Org libVorbis I 20090709", "Vorbis 1.2.3");
+            s_vorbisVersionMap->Add("Xiph.Org libVorbis I 20100325 (Everywhere)", "Vorbis 1.3.1");
+            s_vorbisVersionMap->Add("Xiph.Org libVorbis I 20101101 (Schaufenugget)", "Vorbis 1.3.2");
+            s_vorbisVersionMap->Add("Xiph.Org libVorbis I 20120203 (Omnipresent)", "Vorbis 1.3.3");
+            s_vorbisVersionMap->Add("Xiph.Org libVorbis I 20140122 (Turpakäräjiin)", "Vorbis 1.3.4");
+            s_vorbisVersionMap->Add(L"Xiph.Org libVorbis I 20150105 (⛄⛄⛄⛄)", "Vorbis 1.3.5");
+            s_vorbisVersionMap->Add(L"Xiph.Org libVorbis I 20180316 (Now 100% fewer shells)", "Vorbis 1.3.6");
+            s_vorbisVersionMap->Add(L"Xiph.Org libVorbis I 20200704 (Reducing Environment)", "Vorbis 1.3.7");
         }
 
         TaglibTagger(String^ path)
@@ -1125,7 +1153,16 @@ namespace NTagLib
                 }
             }
             else
-                tags->Add(tag, gcnew List<String^>(Enumerable::Distinct<String^>(values)));
+            {
+                auto newValues = gcnew List<String^>(values->Length);
+                for each (String^ value in values)
+                {
+                    if (!newValues->Contains(value))
+                        newValues->Add(value);
+                }
+
+                tags->Add(tag, newValues);
+            }
         }
 
         void AddTag(String^ tag, String^ value)
@@ -1145,5 +1182,5 @@ namespace NTagLib
         }
     };
 
-    #pragma endregion
+#pragma endregion
 }
