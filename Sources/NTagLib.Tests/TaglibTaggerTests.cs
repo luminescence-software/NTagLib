@@ -69,7 +69,7 @@ public class TaglibTaggerTests
       Assert.IsTrue(tagger.BitsPerSample is 0 or 16);
       Assert.AreEqual(2, tagger.Channels);
       Assert.IsTrue(tagger.SampleRate is 22_050 or 44_100 or 48_000);
-      Assert.IsTrue(tagger.Duration > TimeSpan.Zero);
+      Assert.IsGreaterThan(TimeSpan.Zero, tagger.Duration);
    }
 
    private static string WorkOnCopy(string path)
