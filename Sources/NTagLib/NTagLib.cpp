@@ -432,7 +432,7 @@ namespace NTagLib
         });
 
         static initonly ReadOnlyCollection<String^>^ unsupportedFramesId3v23 = Array::AsReadOnly(gcnew array<String^> {
-            ReleaseDate, TaggingDate, Mood, ProducedNotice, AlbumSort, TitleSort, ArtistSort
+            AlbumSort, ArtistSort, ComposerSort, DiscSubtitle, EncodingTime, Mood, ProducedNotice, ReleaseDate, TaggingDate, TitleSort
         });
 
     public:
@@ -605,7 +605,7 @@ namespace
 
     Dictionary<String^, List<String^>^>^ GetTagsFromProperties(const TagLib::PropertyMap& properties)
     {
-        auto tags = gcnew Dictionary<String^, List<String^>^>(properties.size());
+        auto tags = gcnew Dictionary<String^, List<String^>^>(properties.size(), StringComparer::OrdinalIgnoreCase);
 
         for (auto it = properties.begin(); it != properties.end(); ++it)
         {
