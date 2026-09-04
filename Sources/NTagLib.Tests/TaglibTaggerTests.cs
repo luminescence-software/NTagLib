@@ -7,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace NTagLib.Tests;
 
 [TestClass]
+[DoNotParallelize]
 public class TaglibTaggerTests
 {
    private const string TestAudioFilesDirectory = @"D:\Home\Important\Development\Toolkit\Tests\Audio\Tags";
@@ -55,6 +56,131 @@ public class TaglibTaggerTests
    }
 
    [TestMethod]
+   [DataRow("artist")]
+   [DataRow("FAKE")]
+   [DataRow("MUSICBRAINZ_ALBUMID")]
+   [DataRow("ARRANGER")]
+   [DataRow("DJMIXER")]
+   [DataRow("ENGINEER")]
+   [DataRow("MIXER")]
+   [DataRow("PRODUCER")]
+   [DataRow("PERFORMER:GUITAR")]
+   public void MultipleTextValuesForceId3v24(string tag)
+   {
+      string path = WorkOnCopy(Path.Combine(TestAudioFilesDirectory, "mp3.mp3"));
+      Id3Version oldMinVersion = TaglibSettings.MinId3Version;
+      Id3Version oldMaxVersion = TaglibSettings.MaxId3Version;
+
+      try
+      {
+         TaglibSettings.MinId3Version = Id3Version.id3v23;
+         TaglibSettings.MaxId3Version = Id3Version.id3v24;
+
+         var tagger = new TaglibTagger(path);
+         tagger.Tags.Clear();
+         tagger.AddTag(tag, "value 1", "value 2");
+         tagger.SaveTags();
+
+         Assert.AreEqual(4, ReadId3MajorVersion(path));
+
+         tagger.ReloadTags();
+         Assert.IsTrue(tagger.Tags.TryGetValue(tag, out List<string>? values), $"Available tags: {String.Join(", ", tagger.Tags.Keys)}");
+         Assert.AreSequenceEqual(["value 1", "value 2"], values);
+      }
+      finally
+      {
+         TaglibSettings.MinId3Version = oldMinVersion;
+         TaglibSettings.MaxId3Version = oldMaxVersion;
+         File.Delete(path);
+      }
+   }
+
+   [TestMethod]
+   public void MultipleGenresKeepId3v23()
+   {
+      string path = WorkOnCopy(Path.Combine(TestAudioFilesDirectory, "mp3.mp3"));
+
+      try
+      {
+         var tagger = new TaglibTagger(path);
+         tagger.Tags.Clear();
+         tagger.AddTag(TagNameKey.Genre, "Rock", "Pop");
+         tagger.SaveTags();
+
+         Assert.AreEqual(3, ReadId3MajorVersion(path));
+
+         tagger.ReloadTags();
+         Assert.IsTrue(tagger.Tags.TryGetValue(TagNameKey.Genre, out List<string>? values));
+         Assert.AreSequenceEqual(["Rock", "Pop"], values);
+      }
+      finally
+      {
+         File.Delete(path);
+      }
+   }
+
+   [TestMethod]
+   public void DistinctInvolvedRolesKeepId3v23()
+   {
+      string path = WorkOnCopy(Path.Combine(TestAudioFilesDirectory, "mp3.mp3"));
+
+      try
+      {
+         var tagger = new TaglibTagger(path);
+         tagger.Tags.Clear();
+         tagger.AddTag(TagNameKey.Arranger, "arranger");
+         tagger.AddTag(TagNameKey.Producer, "producer");
+         tagger.AddTag("PERFORMER:GUITAR", "performer");
+         tagger.SaveTags();
+
+         Assert.AreEqual(3, ReadId3MajorVersion(path));
+
+         tagger.ReloadTags();
+         Assert.AreEqual("arranger", tagger.GetTagValues(TagNameKey.Arranger).Single());
+         Assert.AreEqual("producer", tagger.GetTagValues(TagNameKey.Producer).Single());
+         Assert.AreEqual("performer", tagger.GetTagValues("PERFORMER:GUITAR").Single());
+      }
+      finally
+      {
+         File.Delete(path);
+      }
+   }
+
+   [TestMethod]
+   [DataRow("DISCSUBTITLE")]
+   [DataRow("ENCODINGTIME")]
+   [DataRow("COMPOSERSORT")]
+   public void Id3v24OnlyTextFrameForcesId3v24WithOneValue(string tag)
+   {
+      string path = WorkOnCopy(Path.Combine(TestAudioFilesDirectory, "mp3.mp3"));
+      Id3Version oldMinVersion = TaglibSettings.MinId3Version;
+      Id3Version oldMaxVersion = TaglibSettings.MaxId3Version;
+
+      try
+      {
+         TaglibSettings.MinId3Version = Id3Version.id3v23;
+         TaglibSettings.MaxId3Version = Id3Version.id3v24;
+
+         var tagger = new TaglibTagger(path);
+         tagger.Tags.Clear();
+         tagger.AddTag(tag, "value");
+         tagger.SaveTags();
+
+         Assert.AreEqual(4, ReadId3MajorVersion(path));
+
+         tagger.ReloadTags();
+         Assert.IsTrue(tagger.Tags.TryGetValue(tag, out List<string>? values));
+         Assert.AreEqual("value", values.Single());
+      }
+      finally
+      {
+         TaglibSettings.MinId3Version = oldMinVersion;
+         TaglibSettings.MaxId3Version = oldMaxVersion;
+         File.Delete(path);
+      }
+   }
+
+   [TestMethod]
    [DataRow("flac.flac")]
    [DataRow("mp3.mp3")]
    [DataRow("vorbis.ogg")]
@@ -82,5 +208,14 @@ public class TaglibTaggerTests
          File.Copy(path, newPath, false);
          return newPath;
       }
+   }
+
+   private static int ReadId3MajorVersion(string path)
+   {
+      using var stream = File.OpenRead(path);
+      Span<byte> header = stackalloc byte[4];
+      Assert.AreEqual(header.Length, stream.Read(header));
+      Assert.AreSequenceEqual("ID3"u8.ToArray(), header[..3].ToArray());
+      return header[3];
    }
 }

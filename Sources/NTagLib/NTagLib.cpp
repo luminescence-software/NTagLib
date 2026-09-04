@@ -413,22 +413,22 @@ namespace NTagLib
     private:
         static initonly ReadOnlyCollection<String^>^ names = Array::AsReadOnly(gcnew array<String^> {
             AcoustidFingerprint, AcoustidID, Album, AlbumArtist, AlbumArtistSort, AlbumSort, Arranger, Artist, ArtistSort, ArtistWebPage, AudioSourceWebPage,
-                BPM,
-                Comment, Compilation, Composer, ComposerSort, Conductor, Copyright, CopyrightURL,
-                Date, DiscNumber, DiscSubtitle, DJMixer,
-                EncodedBy, Encoding, EncodingTime, Engineer,
-                FileType, FileWebPage,
-                Genre,
-                InitialKey, ISRC,
-                Label, Language, Length, Lyricist, Lyrics,
-                Media, Mixer, Mood, MusicBrainzAlbumArtistID, MusicBrainzAlbumID, MusicBrainzArtistID, MusicBrainzReleaseGroupID, MusicBrainzReleaseTrackID, MusicBrainzTrackID, MusicBrainzWorkID, MusicipPUID,
-                OriginalAlbum, OriginalArtist, OriginalDate, OriginalFilename, OriginalLyricist, Owner,
-                PaymentWebPage, Performer, PlaylistDelay, ProducedNotice, Producer, PublisherWebPage,
-                RadioStation, RadioStationOwner, RadioStationWebPage, ReleaseCountry, ReleaseDate, ReleaseStatus, ReleaseType, Remixer,
-                Subtitle,
-                TaggingDate, Title, TitleSort, TrackNumber,
-                URL,
-                Work
+            BPM,
+            Comment, Compilation, Composer, ComposerSort, Conductor, Copyright, CopyrightURL,
+            Date, DiscNumber, DiscSubtitle, DJMixer,
+            EncodedBy, Encoding, EncodingTime, Engineer,
+            FileType, FileWebPage,
+            Genre,
+            InitialKey, ISRC,
+            Label, Language, Length, Lyricist, Lyrics,
+            Media, Mixer, Mood, MusicBrainzAlbumArtistID, MusicBrainzAlbumID, MusicBrainzArtistID, MusicBrainzReleaseGroupID, MusicBrainzReleaseTrackID, MusicBrainzTrackID, MusicBrainzWorkID, MusicipPUID,
+            OriginalAlbum, OriginalArtist, OriginalDate, OriginalFilename, OriginalLyricist, Owner,
+            PaymentWebPage, Performer, PlaylistDelay, ProducedNotice, Producer, PublisherWebPage,
+            RadioStation, RadioStationOwner, RadioStationWebPage, ReleaseCountry, ReleaseDate, ReleaseStatus, ReleaseType, Remixer,
+            Subtitle,
+            TaggingDate, Title, TitleSort, TrackNumber,
+            URL,
+            Work
         });
 
         static initonly ReadOnlyCollection<String^>^ unsupportedFramesId3v23 = Array::AsReadOnly(gcnew array<String^> {
@@ -858,6 +858,22 @@ namespace NTagLib
                 for each (String^ frame in TagNameKey::GetUnsupportedId3v23Frames())
                 {
                     if (tags->ContainsKey(frame))
+                    {
+                        tagVersion = TagLib::ID3v2::Version::v4;
+                        break;
+                    }
+                }
+            }
+
+            if (tagVersion < TagLib::ID3v2::Version::v4)
+            {
+                for each (auto tag in tags)
+                {
+                    // TCON is the only ID3v2.3 frame used by TagLib that can preserve
+                    // multiple values of the same property. IPLS remains valid when
+                    // every role has a single value, but TagLib comma-joins multiple
+                    // people assigned to one role, so only that case requires ID3v2.4.
+                    if (tag.Value->Count > 1 && !String::Equals(tag.Key, TagNameKey::Genre, StringComparison::OrdinalIgnoreCase))
                     {
                         tagVersion = TagLib::ID3v2::Version::v4;
                         break;
